@@ -18,7 +18,9 @@ export class EndpointComponent {
     ) { }
 
     public getApiUrl(): string {
-        return window.location.protocol + "//" + this.document.location.hostname + ":8190/api";
+        console.log("Port: ", this.document.location.Port);
+
+        return window.location.protocol + "//" + this.document.location.hostname + "/api";
     }
 
     public retrieveEvent(id: string): Observable<any> {
