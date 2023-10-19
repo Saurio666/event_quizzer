@@ -20,7 +20,7 @@ import com.sauriotech.eventquizzer.security.Credentials;
 
 @RestController
 @RequestMapping("/api/quizz")
-@CrossOrigin(origins = "http://localhost:4200/")
+@CrossOrigin(origins = "*")
 public class QuizService {
 	@Autowired
 	private QuizzBean quizzBean;
