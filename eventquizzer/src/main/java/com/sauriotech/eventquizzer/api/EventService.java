@@ -18,7 +18,7 @@ import com.sauriotech.eventquizzer.models.EventModel;
 
 @RestController
 @RequestMapping("/api/event")
-@CrossOrigin(origins = "http://localhost:4200/")
+@CrossOrigin(origins = "*")
 public class EventService {
 	@Autowired
 	private EventBean eventBean;
