@@ -1,0 +1,10 @@
+{
+    "question" : "Pregunta",
+    "quizz_msg_already": "El questionario ya fue contestado.",
+    "quizz_msg_thanks": "Gracias por contestar las preguntas.",
+    "quizz_msg_score": "Su puntaje es: ",
+    "quizz_btn_send": "Enviar",
+    "event_btn_register": "Registrar Asistencia",
+    "event_msg_attendance_ok": "Gracias por registrar su asistencia",
+    "event_msg_attendance_duplicate": "La asistencia para este evento ya fue registrada."
+}

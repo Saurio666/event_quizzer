@@ -1,0 +1,71 @@
+<div id="wrapper" class="divided">
+    <section class="wrapper style1 align-center">
+        <div class="inner">
+            <div class="content">
+                <span class="image fit"><img src="https://html5up.net/uploads/demos/story/images/banner.jpg" alt="" style="height: 300px;" /></span>
+
+                <div>
+                    <ng-template [ngIf]="jsonData && jsonData.status != 'OK'">
+                        <div *ngIf="jsonData.message ==='quizz_msg_already'">
+                            <h2>{{environmentLabels?.quizz_msg_already}}</h2>
+                        </div>
+                    </ng-template>
+                    <ng-template [ngIf]="apiSubmitResponse && apiSubmitResponse.apiResponseStatus === 'OK'">
+                        <h2>{{environmentLabels?.quizz_msg_thanks}}</h2>
+
+                        <ng-template [ngIf]="apiSubmitResponse?.data.score">
+                            <h2><b>{{environmentLabels?.quizz_msg_score}}</b> {{apiSubmitResponse?.data.score}}</h2>
+                        </ng-template>
+                    </ng-template>
+                    <ng-template [ngIf]="jsonData && jsonData.status === 'OK' && !apiSubmitResponse">
+                        <div class="row">
+                            <div class="col-12 pt-3">
+                                <h1>{{jsonData.title}}</h1>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 pt-3">
+                                <label>{{jsonData.description}}</label>
+                            </div>
+                        </div>
+                        <br />
+                        <form>
+                            <div class="table-wrapper" *ngFor="let question of jsonData.questions; index as i">
+                                <table class="alt">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                <h3><b>{{environmentLabels?.question}} {{i+1}}</b></h3>
+                                                {{question.question}}
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let answer of question.answers">
+                                            <td class="align-left">
+                                                <div *ngIf="question.type === 'unique'">
+                                                    <input type="radio" name="{{question.id}}" [value]="answer.id"
+                                                        [(ngModel)]="answersMap['q-'+question.id]" id="{{answer.id}}" />
+                                                    <label for="{{answer.id}}">{{answer.answer}}</label>
+                                                </div>
+                                                <div *ngIf="question.type === 'multiple'">
+                                                    <input type="checkbox" name="{{answer.id}}" [value]="answer.id"
+                                                        [(ngModel)]="answersMap['q-'+question.id+';a-'+answer.id]"
+                                                        id="{{answer.id}}" />
+                                                    <label for="{{answer.id}}">{{answer.answer}}</label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br />
+                            </div>
+                            <button (click)="getResponse()">{{environmentLabels?.quizz_btn_send}}</button>
+                        </form>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
