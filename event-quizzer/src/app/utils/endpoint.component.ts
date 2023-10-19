@@ -1,5 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, OnInit } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -10,26 +11,31 @@ import { constants } from './constants';
     providedIn: 'root'
 })
 export class EndpointComponent {
-
+    currentDomain = ''
     constructor(
-        private httpClient: HttpClient
+        private httpClient: HttpClient,
+        @Inject(DOCUMENT) private document: any
     ) { }
 
+    public getApiUrl(): string {
+        return window.location.protocol + "//" + this.document.location.hostname + ":8190/api";
+    }
 
     public retrieveEvent(id: string): Observable<any> {
-        return this.httpClient.get<any>(`${constants.quizzApi}/event/${id}`).pipe(
+        console.log("XD", this.getApiUrl());
+        return this.httpClient.get<any>(`${this.getApiUrl()}/event/${id}`).pipe(
             catchError(this.handleError('retrieveReport', { message: `Could not retrieve event with id ${id}` }))
         );
     }
 
     public retrieveQuizz(id: string): Observable<any> {
-        return this.httpClient.get<any>(`${constants.quizzApi}/quizz/${id}`).pipe(
+        return this.httpClient.get<any>(`${this.getApiUrl()}/quizz/${id}`).pipe(
             catchError(this.handleError('retrieveReport', { message: `Could not retrieve quizz with id ${id}` }))
         );
     }
 
     public retrieveQuizzByUser(id: string, userId: string): Observable<any> {
-        return this.httpClient.get<any>(`${constants.quizzApi}/quizz/${id}/${userId}`).pipe(
+        return this.httpClient.get<any>(`${this.getApiUrl()}/quizz/${id}/${userId}`).pipe(
             catchError(this.handleError('retrieveReport', { message: `Could not retrieve quizz with id ${id}` }))
         );
     }
@@ -42,7 +48,7 @@ export class EndpointComponent {
         const headers = new HttpHeaders({
             'Content-Type': 'application/json'
         });
-        return this.httpClient.post(`${constants.quizzApi}/quizz/submit`, answersMapCheck, { headers }).pipe(
+        return this.httpClient.post(`${this.getApiUrl()}/quizz/submit`, answersMapCheck, { headers }).pipe(
             catchError(this.handleError('submitQuizz', { message: `Could not submit report with id ${id}` }))
         );
     }
@@ -51,7 +57,7 @@ export class EndpointComponent {
         const headers = new HttpHeaders({
             'Content-Type': 'application/json'
         });
-        return this.httpClient.post(`${constants.quizzApi}/event/register`, mapParams, { headers }).pipe(
+        return this.httpClient.post(`${this.getApiUrl()}/event/register`, mapParams, { headers }).pipe(
             catchError(this.handleError('submitAttendance', { message: `Could not submit attendance for ${mapParams}` }))
         );
     }
