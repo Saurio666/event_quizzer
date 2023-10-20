@@ -19,6 +19,10 @@ export class EndpointComponent {
 
     public getApiUrl(): string {
         console.log("Port: ", this.document.location.Port);
+        console.log("Port: ", window.location.port);
+        if(window.location.port) {
+            return window.location.protocol + "//" + this.document.location.hostname + ":8190/api";
+        }
 
         return window.location.protocol + "//" + this.document.location.hostname + "/api";
     }

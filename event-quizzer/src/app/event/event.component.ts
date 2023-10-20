@@ -52,12 +52,15 @@ export class EventComponent implements OnInit {
   }
 
   registration() {
-    var userLang = navigator.language; 
-    console.log("Event ID ", this.id);
-    console.log("language ", userLang);
     const currDate = new Date();
-    console.log("currDate ", formatDate(currDate, 'yyyyMMdd', navigator.language));
-    this.mapParams["a_date"] = formatDate(currDate, 'yyyyMMdd', navigator.language);
+    /*console.log("Event ID ", this.id);
+    console.log("language ", userLang);    
+    console.log(("00"+ 3).slice(-2))
+    console.log(("00"+ 11).slice(-2))*/
+
+    var frDate = currDate.getFullYear() + '' + ("00" + currDate.getMonth()).slice(-2) + '' + ("00" + currDate.getDate()).slice(-2); 
+    console.log(frDate)
+    this.mapParams["a_date"] = frDate
     this.mapParams["id"] = this.id;
     console.log(this.mapParams);
 
