@@ -10,13 +10,17 @@ import { AppComponent } from './app.component';
 import { QuizzerComponent } from './quizzer/quizzer.component';
 import { EventComponent } from './event/event.component';
 import { FooterComponent } from './footer/footer.component';
+import { HomeComponent } from './home/home.component';
+import { HeaderComponent } from './header/header.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     QuizzerComponent,
     EventComponent,
-    FooterComponent    
+    FooterComponent,
+    HomeComponent,
+    HeaderComponent    
   ],
   imports: [
     BrowserModule,
@@ -27,7 +31,8 @@ import { FooterComponent } from './footer/footer.component';
       { path: 'quizzer/:id', component: QuizzerComponent },
       { path: 'quizzer/:id/:userId', component: QuizzerComponent },
       { path: 'quizzer/tkn/:token', component: QuizzerComponent },
-      { path: 'event/:id', component: EventComponent }
+      { path: 'event/:id', component: EventComponent },
+      { path: '', component: HomeComponent }
     ])
   ],
   providers: [],

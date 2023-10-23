@@ -1,8 +1,9 @@
-<ng-template [ngIf]="jsonData && jsonData.status === 'OK'">
-    <div id="wrapper" class="divided">
-        <section
-            class="banner style1 orient-left content-align-left image-position-right fullscreen onload-image-fade-in onload-content-fade-right">
-            <div class="content">
+<div id="wrapper" class="divided">
+    <section
+        class="banner style1 orient-left content-align-left image-position-right fullscreen onload-image-fade-in onload-content-fade-right">
+        <div class="content">
+
+            <ng-template [ngIf]="jsonData && jsonData.status === 'OK'">
                 <h1>{{jsonData.title}}</h1>
                 <p>{{jsonData.description}}</p>
                 <ng-template [ngIf]="apiSubmitResponse && apiSubmitResponse.apiResponseStatus === 'OK'">
@@ -31,10 +32,17 @@
                         </div>
                     </form>
                 </ng-template>
-            </div>
-            <div class="image">
-                <img src="https://html5up.net/uploads/demos/story/images/banner.jpg" alt="" />
-            </div>
-        </section>
-    </div>
-</ng-template>
+            </ng-template>
+            <ng-template [ngIf]="jsonData && jsonData.status === 'ERR'">
+                {{environmentLabels[jsonData.message]}}
+            </ng-template>
+        </div>
+        <div class="image">
+            <ng-template [ngIf]="jsonData && jsonData.status === 'OK'">
+                <img src="{{jsonData.imageUrl}}" alt="" />
+            </ng-template>
+        </div>
+
+
+    </section>
+</div>

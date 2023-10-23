@@ -6,5 +6,6 @@
     "quizz_btn_send": "Enviar",
     "event_btn_register": "Registrar Asistencia",
     "event_msg_attendance_ok": "Gracias por registrar su asistencia",
-    "event_msg_attendance_duplicate": "La asistencia para este evento ya fue registrada."
+    "event_msg_attendance_duplicate": "La asistencia para este evento ya fue registrada.",
+    "event_not_found": "Lo sentimos pero el evento ya no esta activo o no existe"
 }
