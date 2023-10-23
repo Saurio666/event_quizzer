@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sauriotech.eventquizzer.beans.EventBean;
+import com.sauriotech.eventquizzer.dao.EventDao;
 import com.sauriotech.eventquizzer.models.EventModel;
 
 @RestController
@@ -22,11 +23,13 @@ import com.sauriotech.eventquizzer.models.EventModel;
 public class EventService {
 	@Autowired
 	private EventBean eventBean;
+	@Autowired
+	private EventDao eventDao;
 	
 	@GetMapping("/{eventId}")
-	public ResponseEntity<EventModel> getQuizz(@PathVariable("eventId") Long eventId) {
+	public ResponseEntity<EventModel> getEvent(@PathVariable("eventId") Long eventId) {
 		try {
-			EventModel data = eventBean.getEvent(eventId, null);
+			EventModel data = eventBean.getActiveEvent(eventId, eventDao);
 			if (data == null) {
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}

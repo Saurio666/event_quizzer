@@ -17,6 +17,12 @@ public class EventModel extends BaseModel {
 	@Getter
 	@Setter
 	private String description;
+	@Getter
+	@Setter
+	private String imageUrl;
+	
+	public EventModel() {}
+	
 	public EventModel(Long id, String title, String description) {
 		super();
 		this.id = id;

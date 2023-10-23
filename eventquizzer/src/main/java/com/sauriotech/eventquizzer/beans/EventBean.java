@@ -2,9 +2,13 @@ package com.sauriotech.eventquizzer.beans;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import com.sauriotech.eventquizzer.dao.EventDao;
+import com.sauriotech.eventquizzer.entity.Event;
 import com.sauriotech.eventquizzer.models.EventModel;
 
 /**
@@ -13,7 +17,23 @@ import com.sauriotech.eventquizzer.models.EventModel;
  */
 @Service
 public class EventBean extends DummyBean {
-	public EventModel getEvent(Long eventId, String userId) {
+	
+	public EventModel getActiveEvent(Long eventId, EventDao eventDao) {
+		Optional<Event> evt = eventDao.findById(eventId);
+		EventModel model = new EventModel();
+		if(evt.isPresent())
+		{
+			Event e = evt.get();			
+			BeanUtils.copyProperties(e, model);			
+			model.setStatus("OK");			
+		} else {
+			model.setStatus("ERR");
+			model.setMessage("event_not_found");
+		}
+		return model;
+	}
+	
+	/*public EventModel getEvent(Long eventId, String userId) {
 		LoadDummyData();
 
 		if (userId != null) {
@@ -26,7 +46,7 @@ public class EventBean extends DummyBean {
 		} else {
 			return eventDb.get(eventId);
 		}
-	}
+	}*/
 	
 	public Map<String, Object> registerAttendance(Long eventId, String userId, String date) {
 		

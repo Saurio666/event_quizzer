@@ -1,6 +1,7 @@
 package com.sauriotech.eventquizzer.beans;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -15,6 +16,13 @@ import com.sauriotech.eventquizzer.models.QuizzModel;
  */
 @Service
 public class QuizzBean extends DummyBean {
+	
+	public List<QuizzModel> getActiveQuizzesByEvent(Long eventId) {
+		
+		
+		
+		return null;
+	}
 
 	public QuizzModel getQuizz(Long quizzId, String userId) {
 		if (answeredQuizzes.containsKey(userId)) {
