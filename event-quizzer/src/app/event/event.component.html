@@ -5,9 +5,15 @@
 
             <ng-template [ngIf]="jsonData && jsonData.status === 'OK'">
                 <h1>{{jsonData.title}}</h1>
-                <p>{{jsonData.description}}</p>
+                <div [innerHTML]="jsonData.description"></div>
                 <ng-template [ngIf]="apiSubmitResponse && apiSubmitResponse.apiResponseStatus === 'OK'">
                     {{environmentLabels[apiSubmitResponse.data['attendance']]}}
+                    <ng-template [ngIf]="apiSubmitResponse.data['attendance_date']">
+                        <br />{{environmentLabels['date']}} {{apiSubmitResponse.data['attendance_date']}}
+                    </ng-template>
+                    <ng-template [ngIf]="apiSubmitResponse.data['attendance_user']">
+                        <br /> <b>{{environmentLabels['event_msg_welcome']}} {{apiSubmitResponse.data['attendance_user']}}</b>
+                    </ng-template>
                 </ng-template>
 
                 <ng-template [ngIf]="!apiSubmitResponse">
@@ -18,7 +24,11 @@
                                     <label for="identity_card">ID:</label>
                                 </td>
                                 <td><input type="text" name="identity_card" id="identity_card" value="" required
-                                        [(ngModel)]="mapParams['u_id']" /></td>
+                                        [(ngModel)]="mapParams['u_id']" />
+                                    <label for="identity_card" style="color: red;">
+                                        <div [innerHTML]="validationMessage"></div>
+                                    </label>
+                                </td>
                             </tr>
                         </table>
 

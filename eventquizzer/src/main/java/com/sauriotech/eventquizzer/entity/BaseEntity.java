@@ -20,11 +20,10 @@ import lombok.Setter;
  */
 @MappedSuperclass
 public class BaseEntity {
-	@Basic(optional = false)
-	@Column(name = "status")
+	@Column(name = "status", insertable = false)
 	@Getter
 	@Setter
-	private String status;
+	private String recordStatus;
 	
 	@Column(name = "register_date", updatable = false, insertable = false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -37,7 +36,7 @@ public class BaseEntity {
 	@Setter
 	private String registerDbUser;
 	
-	@Column(name = "update_date")
+	@Column(name = "update_date", updatable = false, insertable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	@Getter
 	@Setter

@@ -18,6 +18,7 @@ export class EventComponent implements OnInit {
   environmentLabels: any;
   mapParams: { [key: string]: string } = {};
   apiSubmitResponse: any;
+  validationMessage: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -37,33 +38,36 @@ export class EventComponent implements OnInit {
     }
 
     this.endpoint.getLanguage("es").subscribe(r => this.environmentLabels = r);
+
+    this.validationMessage = '';
   }
 
   scroll(id: any) {
     console.log(`scrolling to ${id}`);
     let el = document.getElementById(id);
-    if(el != null) {
-      el.scrollIntoView({behavior: 'smooth'});
+    if (el != null) {
+      el.scrollIntoView({ behavior: 'smooth' });
     }
   }
 
   getScreenMessage(key: string) {
-    
+
   }
 
   registration() {
-    const currDate = new Date();
-    /*console.log("Event ID ", this.id);
-    console.log("language ", userLang);    
-    console.log(("00"+ 3).slice(-2))
-    console.log(("00"+ 11).slice(-2))*/
 
-    var frDate = currDate.getFullYear() + '' + ("00" + currDate.getMonth()).slice(-2) + '' + ("00" + currDate.getDate()).slice(-2); 
-    console.log(frDate)
-    this.mapParams["a_date"] = frDate
-    this.mapParams["id"] = this.id;
-    console.log(this.mapParams);
+    if (this.mapParams['u_id']) {
+      const currDate = new Date();
+      console.log(currDate)
+      var frDate = currDate.getFullYear() + '' + ("00" + currDate.getMonth()).slice(-2) + '' + ("00" + currDate.getDate()).slice(-2);
+      console.log(frDate)
+      this.mapParams["a_date"] = frDate
+      this.mapParams["id"] = this.id;
+      console.log(this.mapParams);
 
-    this.endpoint.submitAttendance(this.mapParams).subscribe(r => this.apiSubmitResponse = r);
+      this.endpoint.submitAttendance(this.mapParams).subscribe(r => this.apiSubmitResponse = r);
+    } else {
+      this.validationMessage = this.environmentLabels['event_msg_null_u_id'];
+    }
   }
 }

@@ -9,7 +9,7 @@ import lombok.Setter;
  * @author SAURIOTech Solutions.
  *
  */
-public class QuestionModel {
+public class QuestionModel extends BaseModel {
 	@Getter
 	@Setter
 	private Long id;
@@ -25,6 +25,10 @@ public class QuestionModel {
 	@Getter
 	@Setter
 	private List<AnswerModel> answers;
+	
+	public QuestionModel(String status, String message) {
+		super(status, message);
+	}
 	
 		
 	public QuestionModel(Long id, String question, String type, boolean randomOptions, List<AnswerModel> answers) {

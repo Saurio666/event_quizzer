@@ -10,7 +10,7 @@ import { Answer } from '../models/answer'
 
 import { EndpointComponent } from '../utils/endpoint.component';
 
-import {constants} from '../utils/constants';
+import { constants } from '../utils/constants';
 
 @Component({
   selector: 'app-quizzer',
@@ -29,10 +29,60 @@ export class QuizzerComponent implements OnInit {
   jsonData: any;
   apiSubmitResponse: any;
   environmentLabels: any;
+  validationMessage: any;
 
   answersMap: { [key: string]: string } = {};
+  answersErrorsMap: { [key: string]: string } = {};
+
+  constructor(
+    private route: ActivatedRoute,
+    private httpClient: HttpClient,
+    private endpoint: EndpointComponent
+  ) { }
+
+  ngOnInit(): void {
+    this.id = this.route.snapshot.paramMap.get('id');
+    console.log("id --> ", this.id);
+    this.userId = this.route.snapshot.paramMap.get('userId');
+    console.log("userId --> ", this.userId);
+
+    this.LoadResources();
+  }
+
+  private LoadResources() {
+    if (this.userId != null) {
+      this.endpoint.retrieveQuizzByUser(this.id, this.userId).subscribe(r => this.jsonData = r);
+    } else {
+      this.endpoint.retrieveQuizz(this.id).subscribe(r => this.jsonData = r);
+    }
+
+    this.endpoint.getLanguage("es").subscribe(r => this.environmentLabels = r);
+  }
+
+  private validateEmptyAnswers() {
+    this.answersErrorsMap = {};
+    this.validationMessage = '';
+    console.log("Test errors", this.answersErrorsMap);
+    if(this.jsonData.questions) {
+      this.jsonData.questions.forEach((q: { id: string; }) => {
+        if(!this.answersMap['q-' + q.id]) {
+          this.answersErrorsMap['q-' + q.id] = 'quizz_msg_empty_answer';
+        }
+      });
+    }
+    
+    console.log("Test errors", this.answersErrorsMap);
+  }
 
   getResponse() {
+    this.validateEmptyAnswers();
+    if(this.answersErrorsMap && Object.keys(this.answersErrorsMap).length > 0) {
+      this.validationMessage = this.environmentLabels['quizz_msg_validate_answers'];
+      return;
+    }
+    console.log("Continua con el registro");
+    //return;
+
     const answersMapCheck: { [key: string]: any } = {};
 
     if (this.userId != null) {
@@ -80,30 +130,4 @@ export class QuizzerComponent implements OnInit {
 
     this.answersMap = {};
   }
-
-  constructor(
-    private route: ActivatedRoute,
-    private httpClient: HttpClient,
-    private endpoint: EndpointComponent
-  ) { }
-
-  ngOnInit(): void {
-    this.id = this.route.snapshot.paramMap.get('id');
-    console.log("id --> ", this.id);
-    this.userId = this.route.snapshot.paramMap.get('userId');
-    console.log("userId --> ", this.userId);
-
-    this.LoadResources();
-  }
-
-  private LoadResources() {
-    if (this.userId != null) {
-      this.endpoint.retrieveQuizzByUser(this.id, this.userId).subscribe(r => this.jsonData = r);
-    } else {
-      this.endpoint.retrieveQuizz(this.id).subscribe(r => this.jsonData = r);
-    }
-
-    this.endpoint.getLanguage("es").subscribe(r => this.environmentLabels = r);
-  }
-
 }

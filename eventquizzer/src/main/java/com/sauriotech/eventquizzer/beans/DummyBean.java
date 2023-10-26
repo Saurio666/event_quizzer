@@ -48,9 +48,13 @@ public class DummyBean {
 
 		if (!usersAccessDb.containsKey(23L)) {
 			usersAccessDb.put(23L, new HashMap<>());
+			usersAccessDb.put(0L, new HashMap<>());
 
 			usersAccessDb.get(23L).put("12345", null);
 			usersAccessDb.get(23L).put("1111", null);
+			
+			usersAccessDb.get(0L).put("12345", null);
+			usersAccessDb.get(0L).put("1111", null);
 		}
 
 		if (!eventDb.containsKey(23L)) {

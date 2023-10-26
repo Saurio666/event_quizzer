@@ -9,6 +9,8 @@ import java.util.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.sauriotech.eventquizzer.utils.DummyLogger;
+
 /**
  * @author SAURIOTech Solutions.
  *
@@ -37,7 +39,7 @@ public class Encrypter {
 			cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 			return Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes("UTF-8")));
 		} catch (Exception e) {
-			System.out.println("Error while encrypting: " + e.toString());
+			DummyLogger.sysout("Encrypter", "encrypt", "Error while encrypting: " + e.toString());
 		}
 		return null;
 	}
@@ -49,7 +51,7 @@ public class Encrypter {
 			cipher.init(Cipher.DECRYPT_MODE, secretKey);
 			return new String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)));
 		} catch (Exception e) {
-			System.out.println("Error while decrypting: " + e.toString());
+			DummyLogger.sysout("Encrypter", "encrypt", "Error while decrypting: " + e.toString());
 		}
 		return null;
 	}

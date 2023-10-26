@@ -13,5 +13,5 @@ import com.sauriotech.eventquizzer.entity.Event;
  *
  */
 public interface EventDao extends JpaRepository<Event, Long> {
-	public List<Event> findByStatus(String status);
+	public List<Event> findByRecordStatus(String recordStatus);
 }

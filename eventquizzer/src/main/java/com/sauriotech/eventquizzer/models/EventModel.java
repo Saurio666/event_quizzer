@@ -1,5 +1,7 @@
 package com.sauriotech.eventquizzer.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,6 +22,13 @@ public class EventModel extends BaseModel {
 	@Getter
 	@Setter
 	private String imageUrl;
+	@JsonIgnore
+	@Getter
+	@Setter
+	private boolean requiresAuthorization;
+	@Getter
+	@Setter
+	private String eventTimezone;
 	
 	public EventModel() {}
 	

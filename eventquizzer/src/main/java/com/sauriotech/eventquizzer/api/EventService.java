@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sauriotech.eventquizzer.beans.EventBean;
 import com.sauriotech.eventquizzer.dao.EventDao;
 import com.sauriotech.eventquizzer.models.EventModel;
+import com.sauriotech.eventquizzer.utils.DummyLogger;
 
 @RestController
 @RequestMapping("/api/event")
@@ -23,13 +24,11 @@ import com.sauriotech.eventquizzer.models.EventModel;
 public class EventService {
 	@Autowired
 	private EventBean eventBean;
-	@Autowired
-	private EventDao eventDao;
 	
 	@GetMapping("/{eventId}")
 	public ResponseEntity<EventModel> getEvent(@PathVariable("eventId") Long eventId) {
 		try {
-			EventModel data = eventBean.getActiveEvent(eventId, eventDao);
+			EventModel data = eventBean.getActiveEvent(eventId);
 			if (data == null) {
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
@@ -47,11 +46,13 @@ public class EventService {
 		String uId = data.get("u_id").toString();
 		String date = data.get("a_date").toString();
 		
+		DummyLogger.sysout("EventService", "registerAttendance", data);
+		
 		Long eventId = null;
 		Map<String, Object> responseData = null;
 		try {
 			eventId = Long.parseLong(eId);
-			responseData = eventBean.registerAttendance(eventId, uId, date);			
+			responseData = eventBean.registerAttendance(eventId, uId);			
 		}catch (Exception ex) {
 			data.put("attendance", "ERR");
 		}		

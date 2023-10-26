@@ -72,6 +72,16 @@ public class Quizz extends BaseEntity {
 	@Getter
 	@Setter
 	private int isAnonymous;
+
+	@Column(name = "quizz_questions_random_sort")
+	@Getter
+	@Setter
+	private int questionsRandomSort;
+
+	@Column(name = "quizz_requires_authorization")
+	@Getter
+	@Setter
+	private int requiresAuthorization;
 	
 	@Column(name = "event_id")
 	@Getter

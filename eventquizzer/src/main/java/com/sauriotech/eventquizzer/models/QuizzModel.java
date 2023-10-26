@@ -2,6 +2,8 @@ package com.sauriotech.eventquizzer.models;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,6 +27,13 @@ public class QuizzModel extends BaseModel {
 	@Getter
 	@Setter
 	private boolean showScoreOnFinish;
+	@Getter
+	@Setter
+	private String imageUrl;
+	@JsonIgnore
+	@Getter
+	@Setter
+	private boolean requiresAuthorization;
 	
 	public QuizzModel(Long id, String title, String description, List<QuestionModel> questions,
 			String status, String message) {

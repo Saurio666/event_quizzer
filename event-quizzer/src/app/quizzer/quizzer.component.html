@@ -2,7 +2,11 @@
     <section class="wrapper style1 align-center">
         <div class="inner">
             <div class="content">
-                <span class="image fit"><img src="https://html5up.net/uploads/demos/story/images/banner.jpg" alt="" style="height: 300px;" /></span>
+                <span class="image fit">
+                    <ng-template [ngIf]="jsonData && jsonData.imageUrl">
+                        <img src="{{jsonData.imageUrl}}" alt="" style="height: 300px;" />
+                    </ng-template>
+                </span>
 
                 <div>
                     <ng-template [ngIf]="jsonData && jsonData.status != 'OK'">
@@ -37,7 +41,11 @@
                                         <tr>
                                             <th>
                                                 <h3><b>{{environmentLabels?.question}} {{i+1}}</b></h3>
-                                                {{question.question}}
+                                                {{question.question}}<br />
+                                                <div *ngIf="answersErrorsMap['q-'+question.id]">
+                                                    <div [innerHTML]="environmentLabels[answersErrorsMap['q-'+question.id]]"
+                                                        style="color: red; text-align: right;"></div>
+                                                </div>
                                             </th>
                                         </tr>
                                     </thead>
@@ -61,7 +69,12 @@
                                 </table>
                                 <br />
                             </div>
-                            <button (click)="getResponse()">{{environmentLabels?.quizz_btn_send}}</button>
+                            <button (click)="getResponse()" id="btnSendAnswers">{{environmentLabels?.quizz_btn_send}}</button>
+                            <br />
+                            <br />
+                            <label for="btnSendAnswers" style="color: red;">
+                                <div [innerHTML]="validationMessage"></div>
+                            </label>
                         </form>
                     </ng-template>
                 </div>

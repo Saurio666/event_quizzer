@@ -60,6 +60,16 @@ public class Event extends BaseEntity {
 	@Setter
 	private Date eventEndDate;
 	
+	@Column(name = "event_requires_authorization")
+	@Getter
+	@Setter
+	private int requiresAuthorization;
+	
+	@Column(name = "event_timezone")
+	@Getter
+	@Setter
+	private String eventTimezone;
+	
 	@Column(name = "company_id")
 	@Getter
 	@Setter

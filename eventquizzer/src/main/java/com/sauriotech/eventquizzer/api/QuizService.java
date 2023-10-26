@@ -1,5 +1,6 @@
 package com.sauriotech.eventquizzer.api;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import com.sauriotech.eventquizzer.beans.QuizzBean;
 import com.sauriotech.eventquizzer.models.QuizzModel;
 import com.sauriotech.eventquizzer.security.BasicAuthorizer;
 import com.sauriotech.eventquizzer.security.Credentials;
+import com.sauriotech.eventquizzer.utils.DummyLogger;
 
 @RestController
 @RequestMapping("/api/quizz")
@@ -31,7 +33,7 @@ public class QuizService {
 	public ResponseEntity<QuizzModel> getQuizz(@PathVariable("quizId") Long quizId,
 			@PathVariable("userId") String userId) {
 		try {
-			QuizzModel data = quizzBean.getQuizz(quizId, userId);
+			QuizzModel data = quizzBean.getQuizzById(quizId);
 			if (data == null) {
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
@@ -45,7 +47,21 @@ public class QuizService {
 	@GetMapping("/{quizId}")
 	public ResponseEntity<QuizzModel> getQuizz(@PathVariable("quizId") Long quizId) {
 		try {
-			QuizzModel data = quizzBean.getQuizz(quizId, null);
+			QuizzModel data = quizzBean.getQuizzById(quizId);
+			if (data == null) {
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			}
+			return new ResponseEntity<>(data, HttpStatus.OK);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("/dummy/{eventId}")
+	public ResponseEntity<List<QuizzModel>> getQuizzes(@PathVariable("eventId") Long eventId) {
+		try {
+			List<QuizzModel> data = quizzBean.getActiveQuizzesByEvent(eventId, true);
 			if (data == null) {
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
@@ -63,7 +79,8 @@ public class QuizService {
 			Credentials credentials = basicAuthorizer.parseToken(token);
 
 			if (credentials != null) {
-				QuizzModel data = quizzBean.getQuizz(credentials.getQuizId(), credentials.getUserId());
+				//QuizzModel data = quizzBean.getQuizz(credentials.getQuizId(), credentials.getUserId());
+				QuizzModel data = quizzBean.getQuizzById(credentials.getQuizId());
 				if (data == null) {
 					return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 				}
@@ -78,10 +95,11 @@ public class QuizService {
 
 	@PostMapping("/submit")
 	public ResponseEntity<ApiResponse> submitQuizz(@RequestBody Map<String, Object> data) {
-		System.out.println(data);
+		DummyLogger.sysout("QuizService", "submitQuizz", data);
 
 		Map<String, String> answers = (Map<String, String>) data.get("answers");
-		System.out.println("Answers ---> " + answers);
+		DummyLogger.sysout("QuizService", "submitQuizz","Answers ---> " + answers);
+		
 		String userId = data.get("userId").toString();
 		String qId = data.get("id").toString();
 		Long quizzId = null;
@@ -95,7 +113,7 @@ public class QuizService {
 			}
 		} else {
 			quizzId = Long.parseLong(data.get("id").toString());			
-			quizzBean.saveQuizz(userId, quizzId, answers);
+			//quizzBean.saveQuizz(userId, quizzId, answers);
 		}
 		
 		Map<String, Object> responseData = quizzBean.saveQuizz(userId, quizzId, answers);
