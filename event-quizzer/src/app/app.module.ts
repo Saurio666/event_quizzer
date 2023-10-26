@@ -32,7 +32,7 @@ import { HeaderComponent } from './header/header.component';
       { path: 'quizzer/:id/:userId', component: QuizzerComponent },
       { path: 'quizzer/tkn/:token', component: QuizzerComponent },
       { path: 'event/:id', component: EventComponent },
-      { path: '', component: HomeComponent }
+      { path: '', component: HomeComponent } 
     ])
   ],
   providers: [],
