@@ -66,7 +66,7 @@ export class QuizzerComponent implements OnInit {
     if(this.jsonData.questions) {
       this.jsonData.questions.forEach((q: { id: string; }) => {
         if(!this.answersMap['q-' + q.id]) {
-          this.answersErrorsMap['q-' + q.id] = 'quizz_msg_empty_answer';
+          this.answersErrorsMap['q-' + q.id] = 'quizz_frm_msg_empty_answer';
         }
       });
     }
@@ -77,7 +77,7 @@ export class QuizzerComponent implements OnInit {
   getResponse() {
     this.validateEmptyAnswers();
     if(this.answersErrorsMap && Object.keys(this.answersErrorsMap).length > 0) {
-      this.validationMessage = this.environmentLabels['quizz_msg_validate_answers'];
+      this.validationMessage = this.environmentLabels['quizz_frm_msg_validate_answers'];
       return;
     }
     console.log("Continua con el registro");

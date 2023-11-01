@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.slf4j.event.EventConstants;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import com.sauriotech.eventquizzer.models.EventAuthorizedUserModel;
 import com.sauriotech.eventquizzer.models.EventModel;
 import com.sauriotech.eventquizzer.models.ModelConstants;
 import com.sauriotech.eventquizzer.utils.DummyLogger;
+import com.sauriotech.eventquizzer.utils.Language;
 import com.sauriotech.eventquizzer.utils.TimezoneHelper;
 
 /**
@@ -45,7 +47,7 @@ public class EventBean extends DummyBean {
 				
 				return model;
 			}
-			return new EventModel(ModelConstants.ERROR, "event_not_found");
+			return new EventModel(ModelConstants.ERROR, Language.getInstance().getMessage(null, BeansConstants.Event.NOT_FOUND));
 		}
 
 		DummyLogger.sysout("EventBean", "getActiveEvent", "Get event " + eventId + " from cache");
@@ -54,7 +56,7 @@ public class EventBean extends DummyBean {
 
 	private EventModel transformEntity(Event event) {
 
-		EventModel model = new EventModel(ModelConstants.OK, null);
+		EventModel model = new EventModel(ModelConstants.OK, "");
 		BeanUtils.copyProperties(event, model);
 		model.setRequiresAuthorization(event.getRequiresAuthorization() == 1);
 		return model;
@@ -80,7 +82,7 @@ public class EventBean extends DummyBean {
 
 		Map<String, Object> data = new HashMap<>();		
 		if (m == null) {
-			data.put("attendance", "event_not_found");
+			data.put("attendance", Language.getInstance().getMessage(null, BeansConstants.Event.NOT_FOUND));
 		} else {
 			String date = TimezoneHelper.getStringDateFromTimezone(m.getEventTimezone());
 			data.put("attendance_date", date);
@@ -94,7 +96,7 @@ public class EventBean extends DummyBean {
 				Optional<EventAuthorizedUserModel> authorized = authorizedUsers.stream().filter(a -> a.getUserId().equals(userId)).findFirst();
 							
 				if (!authorized.isPresent()) {
-					data.put("attendance", "event_msg_not_authorized_user");
+					data.put("attendance", Language.getInstance().getMessage(null, BeansConstants.Event.NOT_AUTHORIZED));
 				} else {
 					DummyLogger.sysout("EventBean", "registerAttendance", "User " + userId + " authorized");
 					

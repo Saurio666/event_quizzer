@@ -67,7 +67,7 @@ export class EventComponent implements OnInit {
 
       this.endpoint.submitAttendance(this.mapParams).subscribe(r => this.apiSubmitResponse = r);
     } else {
-      this.validationMessage = this.environmentLabels['event_msg_null_u_id'];
+      this.validationMessage = this.environmentLabels['event_frm_err_null_u_id'];
     }
   }
 }

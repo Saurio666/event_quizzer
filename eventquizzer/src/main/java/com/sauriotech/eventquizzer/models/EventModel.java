@@ -1,6 +1,7 @@
 package com.sauriotech.eventquizzer.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sauriotech.eventquizzer.utils.UIMessage;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -48,6 +49,10 @@ public class EventModel extends BaseModel {
 	}
 	
 	public EventModel(String status, String message) {
+		super(status, message);
+	}
+	
+	public EventModel(String status, UIMessage message) {
 		super(status, message);
 	}
 }

@@ -1,18 +1,12 @@
 {
     "question" : "Pregunta",
     "date": "Fecha: ",
-    "quizz_msg_already": "El questionario ya fue contestado.",
-    "quizz_msg_thanks": "Gracias por contestar las preguntas.",
-    "quizz_msg_score": "Su puntaje es: ",
-    "quizz_btn_send": "Enviar",
-    "quizz_not_found": "Lo sentimos pero el cuestionario ya no esta activo o no existe.",
-    "quizz_msg_empty_answer": "* Por favor seleccione una respuesta",
-    "quizz_msg_validate_answers": "Existen preguntas sin contestar, por favor revise el cuestionario",
-    "event_btn_register": "Registrar Asistencia",
-    "event_msg_attendance_ok": "Gracias por registrar su asistencia",
-    "event_msg_attendance_duplicate": "La asistencia para este evento ya fue registrada.",
-    "event_not_found": "Lo sentimos pero el evento ya no esta activo o no existe",
-    "event_msg_null_u_id": "* Por favor ingrese su identificaci&oacute;n.",
-    "event_msg_not_authorized_user": "El participante no se encuentra autorizado para registrarse en este evento.",
-    "event_msg_welcome": "Bienvenido "
+    "quizz_frm_msg_thanks": "Gracias por contestar las preguntas.",
+    "quizz_frm_msg_score": "Su puntaje es: ",
+    "quizz_frm_btn_send": "Enviar",
+    "quizz_frm_msg_empty_answer": "* Por favor seleccione una respuesta",
+    "quizz_frm_msg_validate_answers": "Existen preguntas sin contestar, por favor revise el cuestionario",
+    "event_frm_err_null_u_id": "* Por favor ingrese su identificaci&oacute;n.",
+    "event_frm_btn_register": "Registrar Asistencia",
+    "event_frm_msg_welcome": "Bienvenido "
 }

@@ -3,6 +3,7 @@ package com.sauriotech.eventquizzer.models;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sauriotech.eventquizzer.utils.UIMessage;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -45,6 +46,10 @@ public class QuizzModel extends BaseModel {
 	}
 	
 	public QuizzModel(String status, String message) {
+		super(status, message);
+	}
+	
+	public QuizzModel(String status, UIMessage message) {
 		super(status, message);
 	}
 }

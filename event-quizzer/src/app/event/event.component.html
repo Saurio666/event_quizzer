@@ -1,18 +1,24 @@
 <div id="wrapper" class="divided">
     <section
-        class="banner style1 orient-left content-align-left image-position-right fullscreen onload-image-fade-in onload-content-fade-right">
+        class="banner style1 fullscreen image-position-center">
         <div class="content">
 
             <ng-template [ngIf]="jsonData && jsonData.status === 'OK'">
-                <h1>{{jsonData.title}}</h1>
+                <h1><b style="color: blue;">{{jsonData.title}}</b></h1>
                 <div [innerHTML]="jsonData.description"></div>
                 <ng-template [ngIf]="apiSubmitResponse && apiSubmitResponse.apiResponseStatus === 'OK'">
-                    {{environmentLabels[apiSubmitResponse.data['attendance']]}}
-                    <ng-template [ngIf]="apiSubmitResponse.data['attendance_date']">
-                        <br />{{environmentLabels['date']}} {{apiSubmitResponse.data['attendance_date']}}
+                    <ng-template [ngIf]="apiSubmitResponse.data['attendance']">   
+                        <b>                     
+                        <div [innerHTML]="apiSubmitResponse.data['attendance'].message" style="color: red;" *ngIf="apiSubmitResponse.data['attendance'].type==='ERR'"></div>
+                        <div [innerHTML]="apiSubmitResponse.data['attendance'].message" style="color: blue;" *ngIf="apiSubmitResponse.data['attendance'].type==='INFO'"></div>
+                        <div [innerHTML]="apiSubmitResponse.data['attendance'].message" style="color: orange;" *ngIf="apiSubmitResponse.data['attendance'].type==='WARN'"></div>
+                        </b>
                     </ng-template>
+                    <!--<ng-template [ngIf]="apiSubmitResponse.data['attendance_date']">
+                        <br />{{environmentLabels['date']}} {{apiSubmitResponse.data['attendance_date']}}
+                    </ng-template>-->
                     <ng-template [ngIf]="apiSubmitResponse.data['attendance_user']">
-                        <br /> <b>{{environmentLabels['event_msg_welcome']}} {{apiSubmitResponse.data['attendance_user']}}</b>
+                        <br /> <b>{{environmentLabels['event_frm_msg_welcome']}} {{apiSubmitResponse.data['attendance_user']}}</b>
                     </ng-template>
                 </ng-template>
 
@@ -36,7 +42,7 @@
                             <ul class="actions fit">
                                 <li>
                                     <a class="button icon solid fa-check"
-                                        (click)="registration()">{{environmentLabels?.event_btn_register}}</a>
+                                        (click)="registration()">{{environmentLabels?.event_frm_btn_register}}</a>
                                 </li>
                             </ul>
                         </div>
@@ -44,14 +50,18 @@
                 </ng-template>
             </ng-template>
             <ng-template [ngIf]="jsonData && jsonData.status === 'ERR'">
-                {{environmentLabels[jsonData.message]}}
+                <b>
+                    <div [innerHTML]="jsonData.uiMessage.message" style="color: red;" *ngIf="jsonData.uiMessage.type==='ERR'"></div>
+                </b>
             </ng-template>
         </div>
-        <div class="image">
-            <ng-template [ngIf]="jsonData && jsonData.status === 'OK'">
-                <img src="{{jsonData.imageUrl}}" alt="" />
-            </ng-template>
-        </div>
+        
+        <ng-template [ngIf]="jsonData && jsonData.status === 'OK'">
+            <div class="image fit">
+                <img src="{{jsonData.imageUrl}}" alt="" style="object-fit: fill;" />
+            </div>            
+        </ng-template>
+        
 
 
     </section>

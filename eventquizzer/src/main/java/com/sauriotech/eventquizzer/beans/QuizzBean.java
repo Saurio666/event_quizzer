@@ -19,6 +19,7 @@ import com.sauriotech.eventquizzer.models.ModelConstants;
 import com.sauriotech.eventquizzer.models.QuestionModel;
 import com.sauriotech.eventquizzer.models.QuizzModel;
 import com.sauriotech.eventquizzer.utils.DummyLogger;
+import com.sauriotech.eventquizzer.utils.Language;
 
 /**
  * @author SAURIOTech Solutions.
@@ -58,17 +59,17 @@ public class QuizzBean extends DummyBean {
 				DummyLogger.sysout("QuizzBean", "getQuizzById", "Quizz finded " + quizzId + " from database");
 				m = transformEntity(q.get(), true);
 				ThreadSafeBean.getInstance().addQuizzModel(q.get().getId(), m);
+			} else {
+				return new QuizzModel("ERR", Language.getInstance().getMessage(null, BeansConstants.Quizz.NOT_FOUND));
 			}
-			
-			return new QuizzModel("ERR", "quizz_not_found");
 		}
-		
+
 		DummyLogger.sysout("QuizzBean", "getQuizzById", "Get quizz " + quizzId + " from cache");
-		return m;		
+		return m;
 	}
 
 	private QuizzModel transformEntity(Quizz q, boolean setQuestions) {
-		QuizzModel m = new QuizzModel(ModelConstants.OK, null);
+		QuizzModel m = new QuizzModel(ModelConstants.OK, "");
 		BeanUtils.copyProperties(q, m);
 		m.setShowScoreOnFinish(q.getShowScoreOnFinish() == 1);
 		m.setRequiresAuthorization(q.getRequiresAuthorization() == 1);

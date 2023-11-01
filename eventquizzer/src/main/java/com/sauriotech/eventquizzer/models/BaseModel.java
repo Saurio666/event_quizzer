@@ -1,5 +1,7 @@
 package com.sauriotech.eventquizzer.models;
 
+import com.sauriotech.eventquizzer.utils.UIMessage;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,6 +16,9 @@ public class BaseModel {
 	@Getter
 	@Setter
 	private String message;
+	@Getter
+	@Setter
+	private UIMessage uiMessage;
 
 	public BaseModel() {
 	}
@@ -21,6 +26,11 @@ public class BaseModel {
 	public BaseModel(String status, String message) {
 		this.status = status;
 		this.message = message;
+	}
+	
+	public BaseModel(String status, UIMessage uiMessage) {
+		this.status = status;
+		this.uiMessage = uiMessage;
 	}
 
 }

@@ -8601,3 +8601,88 @@ input, select, textarea {
 			#wrapper.divided > .invert:first-child {
 				box-shadow: none !important;
 			}
+
+
+/* Box */
+
+.box.highlight {
+	text-align: center;
+}
+
+	.box.highlight h2 {
+		font-size: 3em;
+		margin: 0 0 0.25em 0;
+	}
+
+	.box.highlight header > p {
+		font-size: 1.65em;
+		margin: 0 0 1.5em 0;
+	}
+
+.box.feature {
+	text-align: center;
+}
+
+.box.post header {
+	margin: 0 0 2.5em 0;
+}
+
+.box.post h3 {
+	font-size: 3em;
+	margin: 0 0 0.25em 0;
+}
+
+.box.post header > p {
+	font-size: 1.65em;
+	margin: 0 0 0.5em 0;
+}
+
+.box.post ul.meta {
+	margin: 0 0 0.5em 0;
+}
+
+.box.post-summary h3 {
+	line-height: 1em;
+	margin: 0 0 0.75em 0;
+}
+
+.box.post-summary .meta {
+	margin: 0;
+	line-height: 1em;
+}
+
+.box.page-content header {
+	margin: 0 0 2.5em 0;
+}
+
+.box.page-content h2 {
+	font-size: 3em;
+	margin: 0 0 0.5em 0;
+}
+
+.box.page-content header > p {
+	font-size: 1.65em;
+	margin: 0 0 0.5em 0;
+}
+
+.box.page-content ul.meta {
+	margin: 0 0 0.5em 0;
+}
+
+	h2.major {
+		position: relative;
+		border-top: solid 5px #e7eae8;
+		font-size: 2.5em;
+		text-align: center;
+		margin: 0 0 1em 0;
+		top: 0.775em;
+		font-weight: bold;
+	}
+
+		h2.major span {
+			background: #fff;
+			position: relative;
+			display: inline-block;
+			top: -0.775em;
+			padding: 0 1.25em 0 1.25em;
+		}

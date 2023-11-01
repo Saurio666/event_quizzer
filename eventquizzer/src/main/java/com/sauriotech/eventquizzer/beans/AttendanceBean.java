@@ -10,6 +10,7 @@ import com.sauriotech.eventquizzer.entity.Attendance;
 import com.sauriotech.eventquizzer.entity.EntityConstants;
 import com.sauriotech.eventquizzer.models.EventAuthorizedUserModel;
 import com.sauriotech.eventquizzer.utils.DummyLogger;
+import com.sauriotech.eventquizzer.utils.Language;
 
 /**
  * @author SAURIOTech Solutions.
@@ -33,13 +34,13 @@ public class AttendanceBean {
 			Attendance newA = attendanceDao.saveAndFlush(a);		
 			DummyLogger.sysout("AttendanceBean", "registerAttendance", "New entity ID " + newA.getId());
 			
-			data.put("attendance", "event_msg_attendance_ok");
+			data.put("attendance", Language.getInstance().getMessage(null, BeansConstants.Event.ATTENDANCE_OK));
 			if(user.getUserName() != null) {
 				data.put("attendance_user", user.getUserName());
 			}
 		} catch (Exception ex) {			
 			if (ex.getMessage().contains("uk_attendance")) {
-				data.put("attendance", "event_msg_attendance_duplicate");
+				data.put("attendance", Language.getInstance().getMessage(null, BeansConstants.Event.ATTENDANCE_DUPLICATE));
 			} else {
 				ex.printStackTrace();
 			}

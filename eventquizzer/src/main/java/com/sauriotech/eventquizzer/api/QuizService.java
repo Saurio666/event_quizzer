@@ -19,6 +19,7 @@ import com.sauriotech.eventquizzer.models.QuizzModel;
 import com.sauriotech.eventquizzer.security.BasicAuthorizer;
 import com.sauriotech.eventquizzer.security.Credentials;
 import com.sauriotech.eventquizzer.utils.DummyLogger;
+import com.sauriotech.eventquizzer.utils.Language;
 
 @RestController
 @RequestMapping("/api/quizz")
@@ -86,7 +87,7 @@ public class QuizService {
 				}
 				return new ResponseEntity<>(data, HttpStatus.OK);
 			}
-			return new ResponseEntity<>(new QuizzModel("ERR", "Bad request"), HttpStatus.OK);
+			return new ResponseEntity<>(new QuizzModel("ERR", Language.getInstance().getMessage(null, "BAD_REQUEST")), HttpStatus.OK);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
