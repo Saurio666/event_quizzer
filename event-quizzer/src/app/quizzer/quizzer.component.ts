@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpResponse, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { Answer } from '../models/answer'
@@ -27,12 +27,23 @@ export class QuizzerComponent implements OnInit {
   id: any;
   userId: any;
   jsonData: any;
+  model: any;
   apiSubmitResponse: any;
   environmentLabels: any;
   validationMessage: any;
 
   answersMap: { [key: string]: string } = {};
   answersErrorsMap: { [key: string]: string } = {};
+
+  timer: Observable<number> | undefined;
+  timerSubscription: Subscription | undefined;
+  timeLeft: number | undefined;
+  timeElapsedMinutes: any;
+  timeElapsedSeconds: any;
+  remainingTime: any;
+
+  mapParams: { [key: string]: string } = {};
+
 
   constructor(
     private route: ActivatedRoute,
@@ -47,11 +58,36 @@ export class QuizzerComponent implements OnInit {
     console.log("userId --> ", this.userId);
 
     this.LoadResources();
+
+    //this.model = this.jsonData.data.model.
+    console.log("this.jsonData ", this.jsonData);
+    console.log("this.jsonData.data.att_id ", this.jsonData?.data.att_id);
   }
 
   private LoadResources() {
     if (this.userId != null) {
-      this.endpoint.retrieveQuizzByUser(this.id, this.userId).subscribe(r => this.jsonData = r);
+      if (this.id === 'evt') {
+        if (this.mapParams['u_id']) {
+          this.endpoint.retrieveQuizzByEventAndUser(this.userId, this.mapParams['u_id']).subscribe(r => {
+            this.jsonData = r;
+          });
+        } else {
+          this.endpoint.retrieveQuizzByEvent(this.userId).subscribe(r => {
+            this.jsonData = r;
+          });
+        }
+      } else {
+
+        this.endpoint.retrieveQuizzByUser(this.id, this.userId).subscribe(r => {
+          this.jsonData = r;
+          console.log("r.data.att_elp", r.data.att_elp);
+          console.log("r.data.model.time", r.data.model.quizzTime);
+          console.log("r.data.att_id", r.data.att_id);
+          if (r.data.model.quizzTime > 0) {
+            this.startTimer(r.data.att_elp, r.data.model.quizzTime);
+          }
+        });
+      }
     } else {
       this.endpoint.retrieveQuizz(this.id).subscribe(r => this.jsonData = r);
     }
@@ -59,28 +95,78 @@ export class QuizzerComponent implements OnInit {
     this.endpoint.getLanguage("es").subscribe(r => this.environmentLabels = r);
   }
 
-  private validateEmptyAnswers() {
+  private startTimer(elapsedTime: number, maxMinutes: number) {
+    console.log("startTimer elapsedTime --> ", elapsedTime)
+    const timerInterval = 1000; // Intervalo de 1 segundo
+    const totalTime = 60; // Tiempo total en segundos
+    this.timeElapsedMinutes = elapsedTime;
+    this.remainingTime = maxMinutes - elapsedTime;
+
+
+    this.timer = new Observable<number>((observer) => {
+      this.timeElapsedSeconds = 0;
+
+      const timerId = setInterval(() => {
+        observer.next(this.timeElapsedSeconds);
+        if (this.timeElapsedSeconds === 59) {
+          this.timeElapsedMinutes++;
+          this.remainingTime--;
+          this.timeElapsedSeconds = 0;
+        } else {
+          this.timeElapsedSeconds++;
+        }
+
+        if (this.timeElapsedMinutes > maxMinutes) {
+          clearInterval(timerId);
+          observer.complete();
+        }
+      }, timerInterval);
+
+      // Cuando el componente se destruye, detenemos el temporizador
+      return () => {
+        clearInterval(timerId);
+      };
+    });
+
+    this.timerSubscription = this.timer.subscribe({
+      next: (time) => {
+        this.timeLeft = time;
+      },
+      complete: () => {
+        console.log('Tiempo agotado');
+        this.getResponse('N');
+      }
+    });
+  }
+
+  private validateEmptyAnswers(answersMapForResponse: any) {
+    console.log("answersMapForResponse --> ", answersMapForResponse);
     this.answersErrorsMap = {};
     this.validationMessage = '';
     console.log("Test errors", this.answersErrorsMap);
-    if(this.jsonData.questions) {
-      this.jsonData.questions.forEach((q: { id: string; }) => {
-        if(!this.answersMap['q-' + q.id]) {
+    if (this.jsonData.questions) {
+      this.jsonData.questions.forEach((q: { id: string; correctAnswers: number; }) => {
+        if (!answersMapForResponse[q.id]) {
           this.answersErrorsMap['q-' + q.id] = 'quizz_frm_msg_empty_answer';
+        } else {
+          const array = answersMapForResponse[q.id].split(',');
+          console.log("array", array, array.length);
+          if (array.length < q.correctAnswers) {
+            this.answersErrorsMap['q-' + q.id] = 'quizz_frm_msg_answer_counter_min';
+          }
+          else {
+            if (array.length > q.correctAnswers) {
+              this.answersErrorsMap['q-' + q.id] = 'quizz_frm_msg_answer_counter_max';
+            }
+          }
         }
       });
     }
-    
+
     console.log("Test errors", this.answersErrorsMap);
   }
 
-  getResponse() {
-    this.validateEmptyAnswers();
-    if(this.answersErrorsMap && Object.keys(this.answersErrorsMap).length > 0) {
-      this.validationMessage = this.environmentLabels['quizz_frm_msg_validate_answers'];
-      return;
-    }
-    console.log("Continua con el registro");
+  getResponse(validateEmpty: string) {
     //return;
 
     const answersMapCheck: { [key: string]: any } = {};
@@ -89,30 +175,51 @@ export class QuizzerComponent implements OnInit {
       answersMapCheck["userId"] = this.userId;
     }
     answersMapCheck["id"] = this.id;
+    answersMapCheck["att_id"] = this.jsonData.data.att_id;
+
     const answersMapForResponse: { [key: string]: string } = {};
+
+    console.log("answersMap", this.answersMap);
 
     const keys = Object.keys(this.answersMap);
     keys.forEach((key) => {
 
-      if (key.includes("a")) {
-        const data = key.split(";");
-        //console.log('pregunta:', data[0].substring(2));
-        //console.log('respuesta:', data[1].substring(2));
+      if (this.answersMap[key]) {
 
-        if (answersMapForResponse[data[0].substring(2)] != null) {
-          const newValue = answersMapForResponse[data[0].substring(2)] + "," + data[1].substring(2);
+        if (key.includes("a")) {
+          const data = key.split(";");
+          //console.log('pregunta:', data[0].substring(2));
+          //console.log('respuesta:', data[1].substring(2));
 
-          answersMapForResponse[data[0].substring(2)] = newValue;
+          if (answersMapForResponse[data[0].substring(2)] != null) {
+            const newValue = answersMapForResponse[data[0].substring(2)] + "," + data[1].substring(2);
+
+            answersMapForResponse[data[0].substring(2)] = newValue;
+          } else {
+            answersMapForResponse[data[0].substring(2)] = data[1].substring(2);
+          }
+
         } else {
-          answersMapForResponse[data[0].substring(2)] = data[1].substring(2);
+          //console.log('pregunta:', key.substring(2));
+          //console.log('respuesta:', this.answersMap[key]);
+          answersMapForResponse[key.substring(2)] = this.answersMap[key] + "";
         }
-
-      } else {
-        //console.log('pregunta:', key.substring(2));
-        //console.log('respuesta:', this.answersMap[key]);
-        answersMapForResponse[key.substring(2)] = this.answersMap[key] + "";
       }
     });
+
+    if (validateEmpty === 'Y') {
+      console.log("Requiere validacion");
+      this.validateEmptyAnswers(answersMapForResponse);
+      if (this.answersErrorsMap && Object.keys(this.answersErrorsMap).length > 0) {
+        this.validationMessage = this.environmentLabels['quizz_frm_msg_validate_answers'];
+        return;
+      }
+      answersMapCheck["smt_act"] = "0";
+    } else {
+      console.log("No requiere validacion");
+      answersMapCheck["smt_act"] = "1";
+    }
+    console.log("Continua con el registro");
 
     answersMapCheck["answers"] = answersMapForResponse;
 
@@ -129,5 +236,27 @@ export class QuizzerComponent implements OnInit {
 
 
     this.answersMap = {};
+
+    this.scroll('wrapper');
+
+
+  }
+
+  getActiveQuiz() {
+    if (this.mapParams['u_id']) {
+      this.endpoint.retrieveQuizzByEventAndUser(this.userId, this.mapParams['u_id']).subscribe(r => {
+        this.jsonData = r;
+      });
+      this.mapParams['show_valid_quiz'] = 'Y';
+      //console.log(this.mapParams);
+    }
+  }
+
+  scroll(id: any) {
+    console.log(`scrolling to ${id}`);
+    let el = document.getElementById(id);
+    if (el != null) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 }

@@ -25,6 +25,9 @@ public class QuestionModel extends BaseModel {
 	@Getter
 	@Setter
 	private List<AnswerModel> answers;
+	@Getter
+	@Setter
+	private int correctAnswers;
 	
 	public QuestionModel(String status, String message) {
 		super(status, message);

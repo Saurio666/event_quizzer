@@ -22,7 +22,7 @@ public class AnswerBean {
 	private AnswerDao answerDao;
 	
 	public List<AnswerModel> getActiveAnswersByQuestion(Long questionId) {
-		List<Answer> answers = answerDao.findByRecordStatusAndQuestionId(EntityConstants.STATUS_ACTIVE, questionId);
+		List<Answer> answers = answerDao.findByRecordStatusAndQuestionIdOrderByIdAsc(EntityConstants.STATUS_ACTIVE, questionId);
 		List<AnswerModel> modelList = new ArrayList<>();
 		
 		if(!answers.isEmpty()) {

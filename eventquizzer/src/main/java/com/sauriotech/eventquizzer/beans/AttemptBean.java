@@ -1,0 +1,125 @@
+package com.sauriotech.eventquizzer.beans;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sauriotech.eventquizzer.dao.AttemptDao;
+import com.sauriotech.eventquizzer.entity.Attempt;
+import com.sauriotech.eventquizzer.entity.EntityConstants;
+import com.sauriotech.eventquizzer.models.AttemptModel;
+import com.sauriotech.eventquizzer.models.QualifiedAnswerModel;
+import com.sauriotech.eventquizzer.utils.DummyLogger;
+import com.sauriotech.eventquizzer.utils.TimezoneHelper;
+
+/**
+ * @author SAURIOTech Solutions.
+ *
+ */
+@Service
+public class AttemptBean {
+	public static final String START = "START";
+	public static final String FINISHED_BY_USER = "FINISHED_BY_USER";
+	public static final String FINISHED_BY_TIMEOUT = "FINISHED_BY_TIMEOUT";
+	
+	@Autowired
+	private AttemptDao attemptDao;
+	
+	public AttemptModel startAttempt(String userId, Long quizzId, String timeZone) {
+		List<Attempt> attempts = attemptDao.findByUserIdAndQuizIdAndRecordStatusAndAttemptEndIsNull(userId, quizzId, EntityConstants.STATUS_ACTIVE);
+		if(attempts.size() == 0) {		
+			Date currentDate = TimezoneHelper.getDateFromTimezone(timeZone);
+			Attempt a = new Attempt();
+			a.setUserId(userId);
+			a.setQuizId(quizzId);
+			a.setAttemptStart(currentDate);
+			a.setAttemptStatus(START);
+			
+			Attempt newA = attemptDao.save(a);
+			
+			return transform(newA);
+			
+		} else {
+			return transform(attempts.get(0));
+		}
+	}
+
+	public AttemptModel submitAttemptInfo(Long attemptId, String data, String qualifiedData, Double score, String timeZone,
+			String action) {
+		Optional<Attempt> attempt = attemptDao.findById(attemptId);
+		if(attempt.isPresent()) {
+			Date currentDate = TimezoneHelper.getDateFromTimezone(timeZone);
+			
+			Attempt a = attempt.get();
+			
+			a.setSubmitedData(data);
+			a.setQualifiedData(qualifiedData);
+			if("0".equals(action)) {
+				a.setAttemptStatus(FINISHED_BY_USER);
+			} else {
+				a.setAttemptStatus(FINISHED_BY_TIMEOUT);
+			}
+			a.setAttemptEnd(currentDate);
+			a.setAttemptScore(score);
+			
+			Attempt am = attemptDao.saveAndFlush(a);
+			
+			return transform(am);
+		}
+
+		return new AttemptModel();
+	}
+	
+	public AttemptModel submitAttemptInfo(String userId, Long quizzId, String data, String qualifiedData,
+			Double score, String timeZone, String action) {
+		List<Attempt> attempts = attemptDao.findByUserIdAndQuizIdAndRecordStatus(userId, quizzId, EntityConstants.STATUS_ACTIVE);
+		if(attempts.size() > 0) {
+			Date currentDate = TimezoneHelper.getDateFromTimezone(timeZone);
+			
+			Attempt a = attempts.get(0);
+			
+			a.setSubmitedData(data);
+			a.setQualifiedData(qualifiedData);
+			if("0".equals(action)) {
+				a.setAttemptStatus(FINISHED_BY_USER);
+			} else {
+				a.setAttemptStatus(FINISHED_BY_TIMEOUT);
+			}
+			a.setAttemptEnd(currentDate);
+			a.setAttemptScore(score);
+			
+			Attempt am = attemptDao.saveAndFlush(a);
+			
+			return transform(am);
+		}
+
+		return new AttemptModel();
+	}
+	
+	private AttemptModel transform(Attempt a) {
+		AttemptModel m = new AttemptModel();
+		BeanUtils.copyProperties(a, m);
+		
+		if(a.getQualifiedData() != null) {
+			ObjectMapper mapper = new ObjectMapper();
+			try {
+				DummyLogger.sysout("AttemptBean", "transform", "qualifiedData --> " + a.getQualifiedData());
+				Map<Long, QualifiedAnswerModel>  qualifiedData = mapper.readValue(a.getQualifiedData(), Map.class);
+				DummyLogger.sysout("AttemptBean", "transform", "qualifiedData --> " + qualifiedData);
+				
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return m;
+	}
+}

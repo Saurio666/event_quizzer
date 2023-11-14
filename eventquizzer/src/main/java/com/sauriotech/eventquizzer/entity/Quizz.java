@@ -37,6 +37,11 @@ public class Quizz extends BaseEntity {
 	@Setter
 	private String description;
 	
+	@Column(name = "quizz_short_description")
+	@Getter
+	@Setter
+	private String shortDescription;
+	
 	@Column(name = "quizz_image_url")
 	@Getter
 	@Setter
@@ -82,6 +87,11 @@ public class Quizz extends BaseEntity {
 	@Getter
 	@Setter
 	private int requiresAuthorization;
+	
+	@Column(name = "quizz_time")
+	@Getter
+	@Setter
+	private int quizzTime;
 	
 	@Column(name = "event_id")
 	@Getter

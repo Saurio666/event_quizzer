@@ -2,6 +2,8 @@ package com.sauriotech.eventquizzer.api;
 
 import java.util.Map;
 
+import com.sauriotech.eventquizzer.utils.UIMessage;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,9 +22,18 @@ public class ApiResponse {
 	@Setter
 	private Map<String, Object> data;
 	
+	@Getter
+	@Setter
+	private UIMessage uiMessage;
+	
 	public ApiResponse(String apiResponseStatus, String apiResponseMessage) {
 		this.apiResponseStatus = apiResponseStatus;
 		this.apiResponseMessage = apiResponseMessage;
+	}
+
+	public ApiResponse(String apiResponseStatus, UIMessage uiMessage) {
+		this.apiResponseStatus = apiResponseStatus;
+		this.uiMessage = uiMessage;
 	}
 	
 	public ApiResponse(String apiResponseStatus, String apiResponseMessage,

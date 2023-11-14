@@ -8,3 +8,5 @@ mvnw spring-boot:run
 http://localhost:8190/api/quizz/23/12345
 
 http://localhost:8190/api/event/23
+
+http://localhost:8190/api/quizz/admin/update/+vu0DcfmsiEp3S54oDBk1Q==

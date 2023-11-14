@@ -35,4 +35,8 @@ public class BasicAuthorizer {
 		
 		return null;
 	}
+	
+	public String encryptData(String token) {
+		return Encrypter.encrypt(token, KEY);
+	}
 }

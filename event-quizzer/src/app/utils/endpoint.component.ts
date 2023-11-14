@@ -46,6 +46,18 @@ export class EndpointComponent {
         );
     }
 
+    public retrieveQuizzByEvent(id: string): Observable<any> {
+        return this.httpClient.get<any>(`${this.getApiUrl()}/quizz/event/${id}`).pipe(
+            catchError(this.handleError('retrieveReport', { message: `Could not retrieve quizz by event id ${id}` }))
+        );
+    }
+
+    public retrieveQuizzByEventAndUser(id: string, userId: string): Observable<any> {
+        return this.httpClient.get<any>(`${this.getApiUrl()}/quizz/event/${id}/${userId}`).pipe(
+            catchError(this.handleError('retrieveReport', { message: `Could not retrieve quizz by event id ${id} for user ${userId}` }))
+        );
+    }
+
     public getLanguage(lan: string): Observable<any>{
         return this.httpClient.get(`/assets/language/${lan}.json`);
     }

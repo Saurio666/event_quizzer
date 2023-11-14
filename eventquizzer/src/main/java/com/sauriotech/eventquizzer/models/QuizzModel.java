@@ -24,6 +24,9 @@ public class QuizzModel extends BaseModel {
 	private String description;
 	@Getter
 	@Setter
+	private String shortDescription;
+	@Getter
+	@Setter
 	private List<QuestionModel> questions;
 	@Getter
 	@Setter
@@ -35,6 +38,21 @@ public class QuizzModel extends BaseModel {
 	@Getter
 	@Setter
 	private boolean requiresAuthorization;
+	@JsonIgnore
+	@Getter
+	@Setter
+	private String eventTimezone;
+	@Getter
+	@Setter
+	private int quizzTime;
+	
+	@Getter
+	@Setter
+	private Long attemptId;
+	
+	@Getter
+	@Setter
+	private String quizUrl;
 	
 	public QuizzModel(Long id, String title, String description, List<QuestionModel> questions,
 			String status, String message) {

@@ -14,4 +14,6 @@ import com.sauriotech.eventquizzer.entity.Answer;
 public interface AnswerDao extends JpaRepository<Answer, Long> {
 	public List<Answer> findByRecordStatus(String recordStatus);
 	public List<Answer> findByRecordStatusAndQuestionId(String recordStatus, Long questionId);
+	public List<Answer> findByRecordStatusAndQuestionIdOrderByIdDesc(String recordStatus, Long questionId);
+	public List<Answer> findByRecordStatusAndQuestionIdOrderByIdAsc(String recordStatus, Long questionId);
 }

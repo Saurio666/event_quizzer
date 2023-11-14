@@ -2,90 +2,251 @@
     <section class="wrapper style1 align-center">
         <div class="inner">
             <div class="content">
-                <span class="image fit">
-                    <ng-template [ngIf]="jsonData && jsonData.imageUrl">
-                        <img src="{{jsonData.imageUrl}}" alt="" style="height: 300px;" />
-                    </ng-template>
-                </span>
 
-                <div>
-                    <ng-template [ngIf]="jsonData && jsonData.status != 'OK'">
-                        <div *ngIf="jsonData.uiMessage">
-                            <h2>
-                                <div [innerHTML]="jsonData.uiMessage.message" style="color: red;" *ngIf="jsonData.uiMessage.type==='ERR'"></div>
-                                <div [innerHTML]="jsonData.uiMessage.message" style="color: blue;" *ngIf="jsonData.uiMessage.type==='INFO'"></div>
-                                <div [innerHTML]="jsonData.uiMessage.message" style="color: orange;" *ngIf="jsonData.uiMessage.type==='WARN'"></div>
-                            </h2>
-                        </div>
-                    </ng-template>
-                    <ng-template [ngIf]="apiSubmitResponse && apiSubmitResponse.apiResponseStatus === 'OK'">
-                        <b><span style="color: blue; font-size: 2.5rem;">{{environmentLabels?.quizz_frm_msg_thanks}}</span></b>
-                        <br />
-                        <ng-template [ngIf]="apiSubmitResponse?.data.score">
-                            <span style="font-size: 2rem;"><b>{{environmentLabels?.quizz_frm_msg_score}}</b> {{apiSubmitResponse?.data.score}}</span>
+                <ng-template [ngIf]="id === 'evt'">
+                    <div>
+                        <span class="image fit">
+                            <ng-template [ngIf]="jsonData && jsonData.data?.event.imageUrl">
+                                <img src="{{jsonData.data?.event.imageUrl}}" alt="" style="height: 400px;" />
+                            </ng-template>
+                        </span>
+                        <ng-template [ngIf]="mapParams['show_valid_quiz'] != 'Y'">
+                            <form id="registerForm">
+                                <div style="text-align: center;">
+                                    <table style="width: auto;">
+                                        <tr>
+                                            <td style="vertical-align: middle; width: 100px;">
+                                                <label for="identity_card">ID:</label>
+                                            </td>
+                                            <td style="vertical-align: middle; width: 500px;"><input type="text"
+                                                    name="identity_card" id="identity_card" value="" required
+                                                    [(ngModel)]="mapParams['u_id']" />
+                                                <label for="identity_card" style="color: red;">
+                                                    <div [innerHTML]="validationMessage"></div>
+                                                </label>
+                                            </td>
+                                            <td style="vertical-align: middle; width: 270px;">
+                                                <a class="button icon solid fa-check"
+                                                    (click)="getActiveQuiz()">{{environmentLabels?.quizz_frm_msg_get_quiz}}</a>
+                                            </td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                            </form>
                         </ng-template>
-                    </ng-template>
-                    <ng-template [ngIf]="jsonData && jsonData.status === 'OK' && !apiSubmitResponse">
-                        <div class="row">
-                            <div class="col-12 pt-3">
-                                <b><h1>{{jsonData.title}}</h1></b>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-12 pt-3">
-                                <h3>{{jsonData.description}}</h3>
-                            </div>
-                        </div>
-                        <br />
-                        <form>
-                            <div class="table-wrapper" *ngFor="let question of jsonData.questions; index as i">
-                                <table class="alt">
+                        <ng-template [ngIf]="mapParams['u_id'] && mapParams['show_valid_quiz'] === 'Y'">
+                            <div class="table-wrapper">
+                                <table>
                                     <thead>
                                         <tr>
-                                            <th>
-                                                <h2 class="major" style="color:blue"><span>{{environmentLabels?.question}} {{i+1}}</span></h2>
-                                                <div style="text-align: justify;"><span style="font-size: 1.2rem;">{{question.question}}</span></div><br />
-                                                <div *ngIf="answersErrorsMap['q-'+question.id]">
-                                                    <div [innerHTML]="environmentLabels[answersErrorsMap['q-'+question.id]]"
-                                                        style="color: red; text-align: right;"></div>
+                                            <th></th>
+                                            <th style="width: 80px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let quiz of jsonData.data?.quiz; index as i">
+                                            <td style="vertical-align: middle;">{{quiz.title}}<br />
+                                                {{quiz.shortDescription}}</td>
+                                            <td style="vertical-align: middle;"><a href="/quizzer/tkn/{{quiz.quizUrl}}"
+                                                    class="icon solid style1 fa-list-ol"
+                                                    style="font-size: 50px;:hover{color: red;}"></a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </ng-template>
+                    </div>
+                </ng-template>
+
+                <ng-template [ngIf]="id != 'evt'">
+                    <div style="text-align: center;">
+                        <span>
+                            <ng-template [ngIf]="jsonData && jsonData.data?.model?.imageUrl">
+
+                                <img src="{{jsonData.data?.model.imageUrl}}" alt="" style="width: 70%;" />
+
+                            </ng-template>
+                        </span>
+                    </div>
+                    <br />
+
+                    <div>
+                        <ng-template [ngIf]="jsonData && jsonData.data.model.status != 'OK'">
+                            <div *ngIf="jsonData.data.model.uiMessage">
+                                <h2>
+                                    <div [innerHTML]="jsonData.data.model.uiMessage.message" style="color: red;"
+                                        *ngIf="jsonData.data.model.uiMessage.type==='ERR'"></div>
+                                    <div [innerHTML]="jsonData.data.model.uiMessage.message" style="color: blue;"
+                                        *ngIf="jsonData.data.model.uiMessage.type==='INFO'"></div>
+                                    <div [innerHTML]="jsonData.data.model.uiMessage.message" style="color: orange;"
+                                        *ngIf="jsonData.data.model.uiMessage.type==='WARN'"></div>
+                                </h2>
+                            </div>
+                        </ng-template>
+                        <ng-template [ngIf]="apiSubmitResponse && apiSubmitResponse.apiResponseStatus === 'OK'">
+                            <span
+                                style="color: blue; font-size: 2.5rem; font-weight: bold;">{{environmentLabels?.quizz_frm_msg_thanks}}</span>
+                            <br />
+                            <ng-template [ngIf]="apiSubmitResponse?.data.percentage">
+                                <span
+                                    style="font-size: 2rem; font-weight: bold;">{{environmentLabels?.quizz_frm_msg_score}}
+                                    {{apiSubmitResponse?.data.score}} / {{apiSubmitResponse?.data.totalScore}}
+                                    ({{apiSubmitResponse?.data.percentage}})</span>
+                            </ng-template>
+
+                            <!-- QUALIFIED RESUME-->
+                            <div class="table-wrapper"
+                                *ngFor="let question of jsonData.data.model.questions; index as i">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th colspan="2">
+                                                <h2 class="major" style="color:blue">
+                                                    <span>{{environmentLabels?.question}}
+                                                        {{i+1}}</span>
+                                                </h2>
+                                                <div class="col-12 pt-3" style="text-align: justify; font-size: 1.2rem;">
+                                                    <div [innerHTML]="question.question"></div>
                                                 </div>
+                                                <br />
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let answer of question.answers">
+                                            <td class="align-center" style="width: 20px; vertical-align: middle;">
+                                                <i class="fa fa-check-circle" aria-hidden="true"
+                                                    style="color: #66c959; font-size: 30px;"
+                                                    *ngIf="apiSubmitResponse?.data.qualified[answer.id]?.correct"></i>
+                                                <i class="fa fa-times-circle" aria-hidden="true"
+                                                    style="color: #d64545; font-size: 30px"
+                                                    *ngIf="!apiSubmitResponse?.data.qualified[answer.id]?.selected && apiSubmitResponse?.data.qualified[answer.id]?.shouldBeSelected"></i>
+                                                <i class="fa fa-times-circle" aria-hidden="true"
+                                                    style="color: #d64545; font-size: 30px"
+                                                    *ngIf="apiSubmitResponse?.data.qualified[answer.id]?.selected && !apiSubmitResponse?.data.qualified[answer.id]?.shouldBeSelected"></i>
+                                            </td>
                                             <td class="align-left">
-                                                <div style="text-align: justify;">
-                                                    <div *ngIf="question.type === 'unique'">
-                                                        <input type="radio" name="{{question.id}}" [value]="answer.id"
-                                                            [(ngModel)]="answersMap['q-'+question.id]" id="{{answer.id}}" />
-                                                        <label for="{{answer.id}}">{{answer.answer}}</label>
+                                                <div style="text-align: justify; vertical-align: middle;">
+                                                    <div *ngIf="apiSubmitResponse?.data.qualified[answer.id]?.selected">
+                                                        <input
+                                                            type="{{question.type === 'multiple' ? 'checkbox' : 'radio'}}"
+                                                            id="{{answer.id}}" checked disabled />
+                                                        <label for="{{answer.id}}"><div [innerHTML]="answer.answer"></div></label>
                                                     </div>
-                                                    <div *ngIf="question.type === 'multiple'">
-                                                        <input type="checkbox" name="{{answer.id}}" [value]="answer.id"
-                                                            [(ngModel)]="answersMap['q-'+question.id+';a-'+answer.id]"
-                                                            id="{{answer.id}}" />
-                                                        <label for="{{answer.id}}">{{answer.answer}}</label>
+                                                    <div
+                                                        *ngIf="!apiSubmitResponse?.data.qualified[answer.id]?.selected">
+                                                        <input
+                                                            type="{{question.type === 'multiple' ? 'checkbox' : 'radio'}}"
+                                                            id="{{answer.id}}" disabled />
+                                                        <label for="{{answer.id}}"><div [innerHTML]="answer.answer"></div></label>
                                                     </div>
                                                 </div>
+
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
                                 <br />
                             </div>
-                            <button (click)="getResponse()" id="btnSendAnswers">{{environmentLabels?.quizz_frm_btn_send}}</button>
+
+                        </ng-template>
+                        <ng-template [ngIf]="jsonData && jsonData.data.model.status === 'OK' && !apiSubmitResponse">
+                            <div class="row">
+                                <div class="col-12 pt-3">
+                                    <h1 style="font-weight: bold;">{{jsonData.data.model.title}}</h1>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12 pt-3">
+                                    <h3>{{jsonData.data.model.shortDescription}}</h3>
+                                </div>
+                            </div>
+
+                            <div class="row" *ngIf="jsonData.data.model.description">
+                                <div class="col-12 pt-3" style="text-align: justify;">
+                                    <div [innerHTML]="jsonData.data.model.description"></div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12 pt-3" style="text-align: right;">
+                                    <div [innerHTML]="environmentLabels?.quizz_frm_start_date + jsonData.data.att_str">
+                                    </div>
+                                </div>
+                                <div *ngIf="remainingTime >= 0">
+                                    <div
+                                        style="position: fixed; opacity: 70%;right: 11em; bottom: 3em; font-weight: bold;">
+                                        {{environmentLabels?.quizz_frm_msg_elapsed}} {{timeElapsedMinutes}} : {{ ('00' +
+                                        timeElapsedSeconds).slice(-2) }} de {{remainingTime}}</div>
+                                    <div *ngIf="remainingTime < 23">
+                                        <div style="opacity: 30%; position: fixed; bottom: 1em; right: 11em; font-weight: bold; color: red;"
+                                            [innerHTML]="environmentLabels?.quizz_frm_hurry_up.replace('#token', remainingTime)">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <br />
-                            <br />
-                            <b>
-                            <label for="btnSendAnswers" style="color: red;">
-                                <div [innerHTML]="validationMessage"></div>
-                            </label>
-                            </b>
-                        </form>
-                    </ng-template>
-                </div>
+                            <form>
+                                <div class="table-wrapper"
+                                    *ngFor="let question of jsonData.data.model.questions; index as i">
+                                    <table class="alt">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    <h2 class="major" style="color:blue">
+                                                        <span>{{environmentLabels?.question}} {{i+1}}</span>
+                                                    </h2>
+                                                    <div>
+                                                        <div [innerHTML]="question.question"
+                                                            style="text-align: justify; font-size: 1.2rem;"></div>
+                                                    </div>
+                                                    <br />
+                                                    <div *ngIf="answersErrorsMap['q-'+question.id]">
+                                                        <div [innerHTML]="environmentLabels[answersErrorsMap['q-'+question.id]].replace('#count', question.correctAnswers)"
+                                                            style="color: red; text-align: right; font-weight: bold;">
+                                                        </div>
+                                                    </div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let answer of question.answers">
+                                                <td class="align-left">
+                                                    <div style="text-align: justify;">
+                                                        <div *ngIf="question.type === 'unique'">
+                                                            <input type="radio" name="{{question.id}}"
+                                                                [value]="answer.id"
+                                                                [(ngModel)]="answersMap['q-'+question.id]"
+                                                                id="{{answer.id}}" />
+                                                            <label for="{{answer.id}}"><div [innerHTML]="answer.answer"></div></label>
+                                                        </div>
+                                                        <div *ngIf="question.type === 'multiple'">
+                                                            <input type="checkbox" name="{{answer.id}}"
+                                                                [value]="answer.id"
+                                                                [(ngModel)]="answersMap['q-'+question.id+';a-'+answer.id]"
+                                                                id="{{answer.id}}" />
+                                                            <label for="{{answer.id}}"><div [innerHTML]="answer.answer"></div></label>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <br />
+                                </div>
+                                <button (click)="getResponse('Y')"
+                                    id="btnSendAnswers">{{environmentLabels?.quizz_frm_btn_send}}</button>
+                                <br />
+                                <br />
+                                <label for="btnSendAnswers" style="color: red; font-weight: bold;">
+                                    <div [innerHTML]="validationMessage"></div>
+                                </label>
+                            </form>
+                        </ng-template>
+                    </div>
+                </ng-template>
             </div>
         </div>
     </section>

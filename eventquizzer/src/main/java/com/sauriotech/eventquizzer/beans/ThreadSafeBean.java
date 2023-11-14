@@ -14,7 +14,7 @@ import com.sauriotech.eventquizzer.utils.DummyLogger;
  *
  */
 public class ThreadSafeBean {
-	private static boolean ENABLED_CACHE = false;
+	private static boolean ENABLED_CACHE = true;
 	private static volatile ThreadSafeBean instance = null;
 	private Map<Long, QuizzModel> quizzModelMap;
 	private Map<Long, EventModel> eventModelMap;
@@ -46,6 +46,9 @@ public class ThreadSafeBean {
 		}
 
 		DummyLogger.sysout("ThreadSafeBean", "getQuizzModel", "Exists");
+		
+		DummyLogger.sysout("ThreadSafeBean", "getQuizzModel", " AttemptId --> " + quizzModelMap.get(quizzId).getAttemptId());
+		
 		return quizzModelMap.get(quizzId);
 	}
 
@@ -53,6 +56,12 @@ public class ThreadSafeBean {
 		DummyLogger.sysout("ThreadSafeBean", "addQuizzModel", "Add quizz model " + quizzId);
 		if (ENABLED_CACHE)
 			quizzModelMap.put(quizzId, quizzModel);
+	}
+	
+	public void refreshQuizzModel(Long quizzId) {
+		DummyLogger.sysout("ThreadSafeBean", "refreshQuizzModel", "Refresh quizz model " + quizzId);
+		if (quizzModelMap.containsKey(quizzId))
+			quizzModelMap.remove(quizzId);
 	}
 
 	public EventModel getEventModel(Long eventId) {

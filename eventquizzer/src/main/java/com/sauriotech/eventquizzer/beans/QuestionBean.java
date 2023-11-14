@@ -31,7 +31,7 @@ public class QuestionBean {
 	
 	public List<QuestionModel> getActiveQuestionsByQuizz(Long quizzId, boolean attachAnswers) {
 		
-		List<Question> questions = questionDao.findByRecordStatusAndQuizzId(EntityConstants.STATUS_ACTIVE, quizzId);
+		List<Question> questions = questionDao.findByRecordStatusAndQuizzIdOrderByIdAsc(EntityConstants.STATUS_ACTIVE, quizzId);
 		List<QuestionModel> modelList = new ArrayList<>();
 		
 		if(!questions.isEmpty()) {
@@ -41,14 +41,19 @@ public class QuestionBean {
 				
 				if (attachAnswers) {
 					List<AnswerModel> answers = answerBean.getActiveAnswersByQuestion(q.getId());
-					
-					if (q.getAnswersRandomSort() == 1) {
-						Collections.shuffle(answers);
+					if(!answers.isEmpty()) {
+						if (q.getAnswersRandomSort() == 1) {
+							Collections.shuffle(answers);
+						}
+						m.setAnswers(answers);
+						
+						m.setCorrectAnswers((int)answers.stream().filter(a -> a.getWeight() > 0).count());
+						
+						modelList.add(m);
 					}
-					m.setAnswers(answers);
+				} else {
+					modelList.add(m);
 				}
-				
-				modelList.add(m);
 			}
 		}
 		
