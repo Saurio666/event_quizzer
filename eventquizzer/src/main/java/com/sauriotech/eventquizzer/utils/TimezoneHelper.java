@@ -1,6 +1,7 @@
 package com.sauriotech.eventquizzer.utils;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -21,6 +22,8 @@ public final class TimezoneHelper {
 	private static final DateFormat DF_TIME = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	private static final DateTimeFormatter formato = DateTimeFormatter.ofPattern("HH:mm:ss");
 	private static final DateTimeFormatter formato2 = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+	
+	private static SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	
 	public static Date getDateFromTimezone(String timeZone) {
 		DummyLogger.sysout(TimezoneHelper.class.getName(), "getDateFromTimezone", "timeZone --> " + timeZone);
@@ -50,8 +53,18 @@ public final class TimezoneHelper {
 		System.out.println("res --> " + res.format(formato2));
 				
 		System.out.println("Date.from(res.atZone(idZona).toInstant()) --> " + Date.from(res.atZone(idZona).toInstant()));
+		Date returnValue = new Date();
+		try {
+			returnValue = formatter.parse(res.format(formato2));
+			System.out.println("formatter.parse(res.format(formato2)) --> " + formatter.parse(res.format(formato2)));
+			System.out.println("returnValue --> " + returnValue);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			returnValue = new Date();
+		}
 		
-		return Date.from(res.atZone(idZona).toInstant());
+		return returnValue;
 	}
 	
 	public static String getStringDateFromTimezone(String timeZone) {
