@@ -18,46 +18,24 @@ import java.util.concurrent.TimeUnit;
  *
  */
 public final class TimezoneHelper {
-	private static final DateFormat DF = new SimpleDateFormat("dd/MM/yyyy");
-	private static final DateFormat DF_TIME = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-	private static final DateTimeFormatter formato = DateTimeFormatter.ofPattern("HH:mm:ss");
-	private static final DateTimeFormatter formato2 = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+	private static String FULL_DATETIME_PATTERN = "dd/MM/yyyy HH:mm:ss";
+	private static String DATE_PATTERN = "dd/MM/yyyy";
 	
-	private static SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+	private static final DateFormat DF = new SimpleDateFormat(DATE_PATTERN);
+	private static final DateFormat DF_TIME = new SimpleDateFormat(FULL_DATETIME_PATTERN);
+	private static final DateTimeFormatter DTF_FULL = DateTimeFormatter.ofPattern(FULL_DATETIME_PATTERN);	
+	private static SimpleDateFormat formatter = new SimpleDateFormat(FULL_DATETIME_PATTERN);
 	
 	public static Date getDateFromTimezone(String timeZone) {
 		DummyLogger.sysout(TimezoneHelper.class.getName(), "getDateFromTimezone", "timeZone --> " + timeZone);
-		TimeZone t2 = TimeZone.getTimeZone(timeZone);
-		DummyLogger.sysout(TimezoneHelper.class.getName(), "getDateFromTimezone", "t2 --> " + t2);
-		DummyLogger.sysout(TimezoneHelper.class.getName(), "getDateFromTimezone", "t2.getID() --> " + t2.getID());
-		
-		DummyLogger.sysout(TimezoneHelper.class.getName(), "getDateFromTimezone", "Calendar.getInstance(t2).getTime() --> " + Calendar.getInstance(t2).getTime());
-		DummyLogger.sysout(TimezoneHelper.class.getName(), "getDateFromTimezone", "Calendar.getInstance(t2).getTime() --> " + Calendar.getInstance(t2).getTime());
-		
-		Date nowUtc = new Date();
-		TimeZone tz = TimeZone.getTimeZone(timeZone);
-		Calendar nowTz = Calendar.getInstance(tz);
-		nowTz.setTime(nowUtc);		
-		DummyLogger.sysout(TimezoneHelper.class.getName(), "getDateFromTimezone", "nowTz.getTime() --> " + nowTz.getTime());
-				
-		ZoneId idZona = ZoneId.of(timeZone);
-		LocalTime horaActual = LocalTime.now(idZona);
-		DummyLogger.sysout(TimezoneHelper.class.getName(), "getDateFromTimezone", "horaActual --> " + horaActual);
-		DummyLogger.sysout(TimezoneHelper.class.getName(), "getDateFromTimezone", "horaActual --> " + horaActual.format(formato));
-		
+		ZoneId idZona = ZoneId.of(timeZone);	
 		Date ts = Calendar.getInstance().getTime();
 		Instant instant = Instant.ofEpochMilli(ts.getTime());
-		LocalDateTime res = LocalDateTime.ofInstant(instant, idZona);
-		
-		System.out.println("res --> " + res);
-		System.out.println("res --> " + res.format(formato2));
-				
-		System.out.println("Date.from(res.atZone(idZona).toInstant()) --> " + Date.from(res.atZone(idZona).toInstant()));
+		LocalDateTime res = LocalDateTime.ofInstant(instant, idZona);		
 		Date returnValue = new Date();
 		try {
-			returnValue = formatter.parse(res.format(formato2));
-			System.out.println("formatter.parse(res.format(formato2)) --> " + formatter.parse(res.format(formato2)));
-			System.out.println("returnValue --> " + returnValue);
+			returnValue = formatter.parse(res.format(DTF_FULL));
+			DummyLogger.sysout(TimezoneHelper.class.getName(), "getDateFromTimezone","returnValue --> " + returnValue);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
