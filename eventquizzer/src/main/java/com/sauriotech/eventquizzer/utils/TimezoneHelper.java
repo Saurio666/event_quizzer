@@ -2,6 +2,8 @@ package com.sauriotech.eventquizzer.utils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -18,6 +20,7 @@ public final class TimezoneHelper {
 	private static final DateFormat DF = new SimpleDateFormat("dd/MM/yyyy");
 	private static final DateFormat DF_TIME = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	private static final DateTimeFormatter formato = DateTimeFormatter.ofPattern("HH:mm:ss");
+	private static final DateTimeFormatter formato2 = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 	
 	public static Date getDateFromTimezone(String timeZone) {
 		DummyLogger.sysout(TimezoneHelper.class.getName(), "getDateFromTimezone", "timeZone --> " + timeZone);
@@ -39,7 +42,16 @@ public final class TimezoneHelper {
 		DummyLogger.sysout(TimezoneHelper.class.getName(), "getDateFromTimezone", "horaActual --> " + horaActual);
 		DummyLogger.sysout(TimezoneHelper.class.getName(), "getDateFromTimezone", "horaActual --> " + horaActual.format(formato));
 		
-		return Calendar.getInstance(t2).getTime();
+		Date ts = Calendar.getInstance().getTime();
+		Instant instant = Instant.ofEpochMilli(ts.getTime());
+		LocalDateTime res = LocalDateTime.ofInstant(instant, idZona);
+		
+		System.out.println("res --> " + res);
+		System.out.println("res --> " + res.format(formato2));
+				
+		System.out.println("Date.from(res.atZone(idZona).toInstant()) --> " + Date.from(res.atZone(idZona).toInstant()));
+		
+		return Date.from(res.atZone(idZona).toInstant());
 	}
 	
 	public static String getStringDateFromTimezone(String timeZone) {
