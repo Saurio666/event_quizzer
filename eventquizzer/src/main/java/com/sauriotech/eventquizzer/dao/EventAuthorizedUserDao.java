@@ -13,4 +13,5 @@ import com.sauriotech.eventquizzer.entity.EventAuthorizedUser;
  */
 public interface EventAuthorizedUserDao extends JpaRepository<EventAuthorizedUser, Long> {
 	public List<EventAuthorizedUser> findByRecordStatusAndEventId(String recordStatus, Long eventId);
+	public List<EventAuthorizedUser> findByUserIdAndEventIdAndRecordStatus(String userId, Long eventId, String recordStatus);
 }

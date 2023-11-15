@@ -74,4 +74,9 @@ public class Event extends BaseEntity {
 	@Getter
 	@Setter
 	private Long companyId;
+	
+	@Column(name = "event_extra_content")
+	@Getter
+	@Setter
+	private String extraContent;
 }

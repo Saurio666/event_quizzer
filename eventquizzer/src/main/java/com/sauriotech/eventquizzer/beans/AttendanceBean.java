@@ -36,7 +36,7 @@ public class AttendanceBean {
 			
 			data.put("attendance", Language.getInstance().getMessage(null, BeansConstants.Event.ATTENDANCE_OK));
 			if(user.getUserName() != null) {
-				data.put("attendance_user", user.getUserName());
+				data.put("attendance_user", getUserName(user.getUserName()));
 			}
 		} catch (Exception ex) {			
 			if (ex.getMessage().contains("uk_attendance")) {
@@ -46,5 +46,13 @@ public class AttendanceBean {
 			}
 		}
 		//attendance_user		
+	}
+	
+	private String getUserName(String fullName) {
+		if(fullName != null) {
+			return fullName.split(" ")[0];
+		}
+		
+		return fullName;
 	}
 }

@@ -45,4 +45,19 @@ public class EventAuthorizedUser extends BaseEntity {
 	@Getter
 	@Setter
 	private Long eventId;
+	
+	@Column(name = "company_location")
+	@Getter
+	@Setter
+	private String companyLocation;
+	
+	@Column(name = "user_position")
+	@Getter
+	@Setter
+	private String userPosition;
+	
+	@Column(name = "user_contact_phone")
+	@Getter
+	@Setter
+	private String userContactPhone;
 }

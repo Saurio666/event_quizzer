@@ -14,5 +14,6 @@
     "quizz_frm_msg_get_quiz": "Validar Ingreso",
     "event_frm_err_null_u_id": "* Por favor ingrese su identificaci&oacute;n.",
     "event_frm_btn_register": "Registrar Asistencia",
-    "event_frm_msg_welcome": "Bienvenido "
+    "event_frm_msg_welcome": "Bienvenido ",
+    "event_frm_msg_extra_content": "Por favor, s&iacute;rvase encontrar en la parte inferior, indicaciones adicionales as&iacute; como tambi&eacute;n el material de apoyo respectivo."
 }

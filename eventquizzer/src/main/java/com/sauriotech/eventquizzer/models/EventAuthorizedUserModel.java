@@ -28,6 +28,18 @@ public class EventAuthorizedUserModel extends BaseModel {
 	@Setter
 	private Long eventId;
 	
+	@Getter
+	@Setter
+	private String companyLocation;
+	
+	@Getter
+	@Setter
+	private String userPosition;
+	
+	@Getter
+	@Setter
+	private String userContactPhone;
+	
 	public EventAuthorizedUserModel(String status, String message) {
 		super(status, message);
 	}

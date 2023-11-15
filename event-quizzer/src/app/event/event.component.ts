@@ -20,6 +20,8 @@ export class EventComponent implements OnInit {
   apiSubmitResponse: any;
   validationMessage: any;
 
+  tmpTest: string = `<a class="icon style2 major fa-save" href="/xd/#"></a>`;
+
   constructor(
     private route: ActivatedRoute,
     private endpoint: EndpointComponent

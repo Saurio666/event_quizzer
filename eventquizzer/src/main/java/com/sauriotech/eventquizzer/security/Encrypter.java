@@ -37,7 +37,9 @@ public class Encrypter {
 			SecretKeySpec secretKey = prepareSecreteKey(secret);
 			Cipher cipher = Cipher.getInstance(ALGORITHM);
 			cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-			return Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes("UTF-8")));
+			String info = Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes("UTF-8")));
+			
+			return info.replace("/", "__.__");
 		} catch (Exception e) {
 			DummyLogger.sysout("Encrypter", "encrypt", "Error while encrypting: " + e.toString());
 		}
@@ -49,7 +51,7 @@ public class Encrypter {
 			SecretKeySpec secretKey = prepareSecreteKey(secret);
 			Cipher cipher = Cipher.getInstance(ALGORITHM);
 			cipher.init(Cipher.DECRYPT_MODE, secretKey);
-			return new String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)));
+			return new String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt.replace("__.__", "/"))));
 		} catch (Exception e) {
 			DummyLogger.sysout("Encrypter", "encrypt", "Error while decrypting: " + e.toString());
 		}

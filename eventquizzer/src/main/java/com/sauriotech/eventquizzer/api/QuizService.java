@@ -15,7 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sauriotech.eventquizzer.beans.BeansConstants;
+import com.sauriotech.eventquizzer.beans.EventAuthorizedUserBean;
 import com.sauriotech.eventquizzer.beans.QuizzBean;
+import com.sauriotech.eventquizzer.models.EventAuthorizedUserModel;
+import com.sauriotech.eventquizzer.models.ModelConstants;
 import com.sauriotech.eventquizzer.models.QuizzModel;
 import com.sauriotech.eventquizzer.security.BasicAuthorizer;
 import com.sauriotech.eventquizzer.security.Credentials;
@@ -30,6 +34,8 @@ public class QuizService {
 	private QuizzBean quizzBean;
 	@Autowired
 	private BasicAuthorizer basicAuthorizer;
+	@Autowired
+	private EventAuthorizedUserBean eventAuthorizedUserBean;
 
 	/*@GetMapping("/{quizId}/{userId}")
 	public ResponseEntity<QuizzModel> getQuizz(@PathVariable("quizId") Long quizId,
@@ -116,11 +122,16 @@ public class QuizService {
 		try {
 			Map<String, Object> responseData = new HashMap<>();
 			responseData.put("u_id", userId);
-			List<QuizzModel> data = quizzBean.getActiveQuizzesByEvent(eventId, false, responseData);
-			if (data == null) {
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			EventAuthorizedUserModel m = eventAuthorizedUserBean.getAuthorization(eventId, userId);
+			if (ModelConstants.OK.equals(m.getStatus())) {
+				List<QuizzModel> data = quizzBean.getActiveQuizzesByEvent(eventId, false, responseData);
+				if (data == null) {
+					return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+				}
+				responseData.put("quiz", data);
+			} else {
+				responseData.put("authorization", Language.getInstance().getMessage(null, BeansConstants.Event.NOT_AUTHORIZED));
 			}
-			responseData.put("quiz", data);
 			return new ResponseEntity<>(new ApiResponse("OK", "", responseData), HttpStatus.OK);
 		} catch (Exception ex) {
 			ex.printStackTrace();

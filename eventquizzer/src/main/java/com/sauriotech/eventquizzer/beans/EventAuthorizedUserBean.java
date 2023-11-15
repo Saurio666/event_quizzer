@@ -2,6 +2,7 @@ package com.sauriotech.eventquizzer.beans;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,5 +59,19 @@ public class EventAuthorizedUserBean {
 		}
 		
 		return authorizedUsers;
+	}
+	
+	public EventAuthorizedUserModel getAuthorization(Long eventId, String userId) {
+		DummyLogger.sysout("EventAuthorizedUserBean", "getActiveAuthorizationByEvent", "Try get authorizations for event " + eventId + " and user " + userId);
+		List<EventAuthorizedUser> authorizations = eventAuthorizedUserDao.findByUserIdAndEventIdAndRecordStatus(userId, eventId, EntityConstants.STATUS_ACTIVE);
+		
+		if(!authorizations.isEmpty()) {
+			EventAuthorizedUserModel m = new EventAuthorizedUserModel(ModelConstants.OK, null);
+			BeanUtils.copyProperties(authorizations.get(0), m);
+			
+			return m;
+		}
+		
+		return new EventAuthorizedUserModel(ModelConstants.ERROR, null);
 	}
 }

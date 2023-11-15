@@ -30,6 +30,9 @@ public class EventModel extends BaseModel {
 	@Getter
 	@Setter
 	private String eventTimezone;
+	@Getter
+	@Setter
+	private String extraContent;
 	
 	public EventModel() {}
 	
