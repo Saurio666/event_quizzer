@@ -6,8 +6,8 @@
                 <ng-template [ngIf]="id === 'evt'">
                     <div>
                         <span class="image fit">
-                            <ng-template [ngIf]="jsonData && jsonData.data?.event.imageUrl">
-                                <img src="{{jsonData.data?.event.imageUrl}}" alt="" style="height: 400px;" />
+                            <ng-template [ngIf]="jsonData && jsonData.data?.event?.imageUrl">
+                                <img src="{{jsonData.data?.event?.imageUrl}}" alt="" style="height: 400px;" />
                             </ng-template>
                         </span>
                         <ng-template [ngIf]="mapParams['show_valid_quiz'] != 'Y'">

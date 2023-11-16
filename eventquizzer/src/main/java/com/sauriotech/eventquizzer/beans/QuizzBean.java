@@ -52,10 +52,10 @@ public class QuizzBean extends DummyBean {
 
 	public List<QuizzModel> getActiveQuizzesByEvent(Long eventId, boolean setQuestions,
 			Map<String, Object> responseData) {
-		/*EventModel em = eventBean.getActiveEvent(eventId);
+		EventModel em = eventBean.getActiveEvent(eventId);
 		responseData.put("event", em);
 
-		EventAuthorizedUserModel authorization = eventAuthorizedUserBean.getAuthorization(eventId,
+		/*EventAuthorizedUserModel authorization = eventAuthorizedUserBean.getAuthorization(eventId,
 				String.valueOf(responseData.get("u_id")));
 
 		if (ModelConstants.OK.equals(authorization.getStatus())) {*/
