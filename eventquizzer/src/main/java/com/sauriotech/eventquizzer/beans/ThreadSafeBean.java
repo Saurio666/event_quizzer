@@ -14,7 +14,7 @@ import com.sauriotech.eventquizzer.utils.DummyLogger;
  *
  */
 public class ThreadSafeBean {
-	private static boolean ENABLED_CACHE = true;
+	private static boolean ENABLED_CACHE = false;
 	private static volatile ThreadSafeBean instance = null;
 	private Map<Long, QuizzModel> quizzModelMap;
 	private Map<Long, EventModel> eventModelMap;

@@ -2,7 +2,8 @@
     <section class="wrapper style1 align-center">
         <div class="inner">
             <div class="content">
-
+                <div [innerHTML]="jsonData.data?.authorization?.message" style="font-weight: bold;"
+                *ngIf="jsonData.data?.authorization?.type==='ERR'"></div>
                 <ng-template [ngIf]="id === 'evt'">
                     <div>
                         <span class="image fit">
@@ -106,7 +107,8 @@
                                                     <span>{{environmentLabels?.question}}
                                                         {{i+1}}</span>
                                                 </h2>
-                                                <div class="col-12 pt-3" style="text-align: justify; font-size: 1.2rem;">
+                                                <div class="col-12 pt-3"
+                                                    style="text-align: justify; font-size: 1.2rem;">
                                                     <div [innerHTML]="question.question"></div>
                                                 </div>
                                                 <br />
@@ -132,14 +134,18 @@
                                                         <input
                                                             type="{{question.type === 'multiple' ? 'checkbox' : 'radio'}}"
                                                             id="{{answer.id}}" checked disabled />
-                                                        <label for="{{answer.id}}"><div [innerHTML]="answer.answer"></div></label>
+                                                        <label for="{{answer.id}}">
+                                                            <div [innerHTML]="answer.answer"></div>
+                                                        </label>
                                                     </div>
                                                     <div
                                                         *ngIf="!apiSubmitResponse?.data.qualified[answer.id]?.selected">
                                                         <input
                                                             type="{{question.type === 'multiple' ? 'checkbox' : 'radio'}}"
                                                             id="{{answer.id}}" disabled />
-                                                        <label for="{{answer.id}}"><div [innerHTML]="answer.answer"></div></label>
+                                                        <label for="{{answer.id}}">
+                                                            <div [innerHTML]="answer.answer"></div>
+                                                        </label>
                                                     </div>
                                                 </div>
 
@@ -220,18 +226,79 @@
                                                                 [value]="answer.id"
                                                                 [(ngModel)]="answersMap['q-'+question.id]"
                                                                 id="{{answer.id}}" />
-                                                            <label for="{{answer.id}}"><div [innerHTML]="answer.answer"></div></label>
+                                                            <label for="{{answer.id}}">
+                                                                <div [innerHTML]="answer.answer"></div>
+                                                            </label>
                                                         </div>
                                                         <div *ngIf="question.type === 'multiple'">
                                                             <input type="checkbox" name="{{answer.id}}"
                                                                 [value]="answer.id"
                                                                 [(ngModel)]="answersMap['q-'+question.id+';a-'+answer.id]"
                                                                 id="{{answer.id}}" />
-                                                            <label for="{{answer.id}}"><div [innerHTML]="answer.answer"></div></label>
+                                                            <label for="{{answer.id}}">
+                                                                <div [innerHTML]="answer.answer"></div>
+                                                            </label>
                                                         </div>
                                                     </div>
                                                 </td>
                                             </tr>
+                                            <tr *ngFor="let childQuestion of question.subQuestions">
+                                                <td class="align-left" style="vertical-align: middle;">
+                                                    <div style="text-align: justify;">
+                                                        <section style="float: left; width: 80%; padding-right: 1rem;">
+                                                            <div [innerHtml]="childQuestion.question"></div>
+                                                        </section>
+                                                        <section
+                                                            style="float: left; width: 20%; padding-left: 0.5rem; border-left: 1px solid;">
+                                                            <div *ngIf="childQuestion.type === 'unique_dd'">
+                                                                <section style="padding: 0.2rem;">
+                                                                    <select (change)="onItemSelected($event, childQuestion)">
+                                                                        <option value="">- Seleccione -</option>
+                                                                        <option
+                                                                            *ngFor="let answer of childQuestion.answers"
+                                                                            value="{{answer.id}}">
+                                                                            <div [innerHTML]="answer.answer"></div>
+                                                                        </option>
+                                                                    </select>
+                                                                </section>
+                                                            </div>
+                                                            <div *ngIf="childQuestion.type != 'unique_dd'">
+                                                                <div *ngFor="let answer of childQuestion.answers">
+                                                                    <section style="padding: 0.2rem;">
+                                                                        <div *ngIf="childQuestion.type === 'unique'">
+                                                                            <input type="radio"
+                                                                                name="{{childQuestion.id}}"
+                                                                                [value]="answer.id"
+                                                                                [(ngModel)]="answersMap['q-'+childQuestion.id]"
+                                                                                id="{{answer.id}}" />
+                                                                            <label for="{{answer.id}}">
+                                                                                <div [innerHTML]="answer.answer">
+                                                                                </div>
+                                                                            </label>
+                                                                        </div>
+                                                                        <div *ngIf="childQuestion.type === 'multiple'">
+                                                                            <input type="checkbox" name="{{answer.id}}"
+                                                                                [value]="answer.id"
+                                                                                [(ngModel)]="answersMap['q-'+childQuestion.id+';a-'+answer.id]"
+                                                                                id="{{answer.id}}" />
+                                                                            <label for="{{answer.id}}">
+                                                                                <div [innerHTML]="answer.answer">
+                                                                                </div>
+                                                                            </label>
+                                                                        </div>
+                                                                    </section>
+                                                                </div>
+                                                            </div>
+                                                            <div *ngIf="answersErrorsMap['q-'+childQuestion.id]">
+                                                                <div [innerHTML]="environmentLabels[answersErrorsMap['q-'+childQuestion.id]].replace('#count', childQuestion.correctAnswers)"
+                                                                    style="color: red; text-align: right; font-weight: bold; font-size: 16px;">
+                                                                </div>
+                                                            </div>
+                                                        </section>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
                                         </tbody>
                                     </table>
                                     <br />

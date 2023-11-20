@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sauriotech.eventquizzer.dao.AttemptDao;
 import com.sauriotech.eventquizzer.dao.QuizzDao;
+import com.sauriotech.eventquizzer.entity.Attempt;
 import com.sauriotech.eventquizzer.entity.EntityConstants;
 import com.sauriotech.eventquizzer.entity.Quizz;
 import com.sauriotech.eventquizzer.models.AnswerModel;
@@ -49,38 +51,42 @@ public class QuizzBean extends DummyBean {
 	private BasicAuthorizer basicAuthorizer;
 	@Autowired
 	private EventAuthorizedUserBean eventAuthorizedUserBean;
+	@Autowired
+	private AttemptDao attemptDao;
 
 	public List<QuizzModel> getActiveQuizzesByEvent(Long eventId, boolean setQuestions,
 			Map<String, Object> responseData) {
 		EventModel em = eventBean.getActiveEvent(eventId);
 		responseData.put("event", em);
 
-		/*EventAuthorizedUserModel authorization = eventAuthorizedUserBean.getAuthorization(eventId,
-				String.valueOf(responseData.get("u_id")));
+		/*
+		 * EventAuthorizedUserModel authorization =
+		 * eventAuthorizedUserBean.getAuthorization(eventId,
+		 * String.valueOf(responseData.get("u_id")));
+		 * 
+		 * if (ModelConstants.OK.equals(authorization.getStatus())) {
+		 */
+		List<Quizz> quizzez = quizzDao.findByRecordStatusAndEventId(EntityConstants.STATUS_ACTIVE, eventId);
 
-		if (ModelConstants.OK.equals(authorization.getStatus())) {*/
-			List<Quizz> quizzez = quizzDao.findByRecordStatusAndEventId(EntityConstants.STATUS_ACTIVE, eventId);
+		List<QuizzModel> models = new ArrayList<>();
 
-			List<QuizzModel> models = new ArrayList<>();
+		if (!quizzez.isEmpty()) {
 
-			if (!quizzez.isEmpty()) {
+			for (Quizz q : quizzez) {
+				QuizzModel m = transformEntity(q, setQuestions);
 
-				for (Quizz q : quizzez) {
-					QuizzModel m = transformEntity(q, setQuestions);
-
-					if (responseData.containsKey("u_id")) {
-						m.setQuizUrl(
-								basicAuthorizer.encryptData(q.getId() + ";" + responseData.get("u_id").toString()));
-					}
-
-					models.add(m);
+				if (responseData.containsKey("u_id")) {
+					m.setQuizUrl(basicAuthorizer.encryptData(q.getId() + ";" + responseData.get("u_id").toString()));
 				}
-			}
 
-			return models;
-		/*}
-		responseData.put("", authorization);
-		return new ArrayList<>();*/
+				models.add(m);
+			}
+		}
+
+		return models;
+		/*
+		 * } responseData.put("", authorization); return new ArrayList<>();
+		 */
 	}
 
 	public QuizzModel getQuizzByIdNonStart(Long quizzId) {
@@ -112,12 +118,23 @@ public class QuizzBean extends DummyBean {
 
 		// Only in this case not set the attempt into cache
 		if (startAttempt) {
-			AttemptModel am = attemptBean.startAttempt(userId, quizzId, m.getEventTimezone());
-			responseData.put("att_id", am.getId());
-			responseData.put("att_str", TimezoneHelper.convertStringDateFull(am.getAttemptStart()));
-			Date currentTime = TimezoneHelper.getDateFromTimezone(m.getEventTimezone());
-			responseData.put("att_elp", TimezoneHelper.getDifferenceInMinutes(am.getAttemptStart(), currentTime));
-			// responseData.
+			// Verify max attempts
+			DummyLogger.sysout("QuizzBean", "getQuizzById", "Check for previus attempts");
+			DummyLogger.sysout("QuizzBean", "getQuizzById", "userId " + userId);
+			DummyLogger.sysout("QuizzBean", "getQuizzById", "quizzId " + quizzId);
+
+			AttemptModel am = attemptBean.startAttempt(userId, quizzId, m.getEventTimezone(), m.getAttemptsPerUser());
+			if (am != null) {
+				responseData.put("att_id", am.getId());
+				responseData.put("att_str", TimezoneHelper.convertStringDateFull(am.getAttemptStart()));
+				Date currentTime = TimezoneHelper.getDateFromTimezone(m.getEventTimezone());
+				responseData.put("att_elp", TimezoneHelper.getDifferenceInMinutes(am.getAttemptStart(), currentTime));
+				// responseData.
+			} else {
+				responseData.put("authorization",
+						Language.getInstance().getMessage(null, BeansConstants.Quizz.MAX_ATTEMPTS));
+				return null;
+			}
 		}
 
 		return m;
@@ -176,34 +193,72 @@ public class QuizzBean extends DummyBean {
 
 			}
 
-			for (AnswerModel answer : question.getAnswers()) {
-				DummyLogger.sysout("QuizzBean", "saveQuizz", "\tanswer " + answer.getId());
-				if (answer.getWeight() > 0) {
-					totalScore += answer.getWeight();
-					boolean correct = false;
-					boolean selected = false;
-					if (answers.containsKey(question.getId().toString())) {
-						String response = answers.get(question.getId().toString());
-						if (response.contains(answer.getId().toString())) {
-							DummyLogger.sysout("QuizzBean", "saveQuizz", "\t\tuser select corect answer ");
-							// DummyLogger.sysout("QuizzBean", "saveQuizz", "score " + score);
-							// DummyLogger.sysout("QuizzBean", "saveQuizz", "answer.getWeight() " +
-							// answer.getWeight());
-							score += answer.getWeight();
-							// DummyLogger.sysout("QuizzBean", "saveQuizz", "score " + score);
-							correct = true;
-							selected = true;
+			if ("parent".equals(question.getType())) {
+				for (QuestionModel child : question.getSubQuestions()) {
+					DummyLogger.sysout("QuizzBean", "saveQuizz", "Question child " + child.getId());
+					Double childTotalScore = 0D;
+					Double childScore = 0D;
+					for (AnswerModel answer : child.getAnswers()) {
+						DummyLogger.sysout("QuizzBean", "saveQuizz", "\tanswer " + answer.getId());
+						if (answer.getWeight() > 0) {
+							childTotalScore += answer.getWeight();
+							boolean correct = false;
+							boolean selected = false;
+							if (answers.containsKey(child.getId().toString())) {
+								String response = answers.get(child.getId().toString());
+								if (response.contains(answer.getId().toString())) {
+									DummyLogger.sysout("QuizzBean", "saveQuizz", "\t\tuser select correct answer ");
+									childScore += answer.getWeight();
+									correct = true;
+									selected = true;
+								}
+							}
+							qualified.put(answer.getId(),
+									new QualifiedAnswerModel(answer.getId(), correct, selected, child.getId(), true));
+						} else {
+							if (answers.containsKey(child.getId().toString())) {
+								String response = answers.get(child.getId().toString());
+								if (response.contains(answer.getId().toString())) {
+									DummyLogger.sysout("QuizzBean", "saveQuizz", "\t\tuser select incorrect answer ");
+									qualified.put(answer.getId(), new QualifiedAnswerModel(answer.getId(), false, true,
+											child.getId(), false));
+								}
+							}
 						}
 					}
-					qualified.put(answer.getId(),
-							new QualifiedAnswerModel(answer.getId(), correct, selected, question.getId(), true));
-				} else {
-					if (answers.containsKey(question.getId().toString())) {
-						String response = answers.get(question.getId().toString());
-						if (response.contains(answer.getId().toString())) {
-							DummyLogger.sysout("QuizzBean", "saveQuizz", "\t\tuser select incorrect answer ");
-							qualified.put(answer.getId(),
-									new QualifiedAnswerModel(answer.getId(), false, true, question.getId(), false));
+
+					DummyLogger.sysout("QuizzBean", "saveQuizz", "Child total score " + childTotalScore);
+					DummyLogger.sysout("QuizzBean", "saveQuizz", "Child score " + childScore);
+
+					totalScore += childTotalScore;
+					score += childScore;
+				}
+			} else {
+				for (AnswerModel answer : question.getAnswers()) {
+					DummyLogger.sysout("QuizzBean", "saveQuizz", "\tanswer " + answer.getId());
+					if (answer.getWeight() > 0) {
+						totalScore += answer.getWeight();
+						boolean correct = false;
+						boolean selected = false;
+						if (answers.containsKey(question.getId().toString())) {
+							String response = answers.get(question.getId().toString());
+							if (response.contains(answer.getId().toString())) {
+								DummyLogger.sysout("QuizzBean", "saveQuizz", "\t\tuser select correct answer ");
+								score += answer.getWeight();
+								correct = true;
+								selected = true;
+							}
+						}
+						qualified.put(answer.getId(),
+								new QualifiedAnswerModel(answer.getId(), correct, selected, question.getId(), true));
+					} else {
+						if (answers.containsKey(question.getId().toString())) {
+							String response = answers.get(question.getId().toString());
+							if (response.contains(answer.getId().toString())) {
+								DummyLogger.sysout("QuizzBean", "saveQuizz", "\t\tuser select incorrect answer ");
+								qualified.put(answer.getId(),
+										new QualifiedAnswerModel(answer.getId(), false, true, question.getId(), false));
+							}
 						}
 					}
 				}

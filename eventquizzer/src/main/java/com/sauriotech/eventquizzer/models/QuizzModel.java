@@ -54,6 +54,10 @@ public class QuizzModel extends BaseModel {
 	@Setter
 	private String quizUrl;
 	
+	@Getter
+	@Setter
+	private int attemptsPerUser;
+	
 	public QuizzModel(Long id, String title, String description, List<QuestionModel> questions,
 			String status, String message) {
 		super(status, message);

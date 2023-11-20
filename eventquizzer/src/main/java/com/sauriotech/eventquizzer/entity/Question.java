@@ -43,4 +43,9 @@ public class Question extends BaseEntity{
 	@Getter
 	@Setter
 	public Long quizzId;
+
+	@Column(name = "question_id_parent")
+	@Getter
+	@Setter
+	public Long parentQuestionId;
 }

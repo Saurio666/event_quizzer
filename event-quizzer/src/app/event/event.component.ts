@@ -29,7 +29,7 @@ export class EventComponent implements OnInit {
 
   ngOnInit(): void {
     this.id = this.route.snapshot.paramMap.get('id');
-    console.log("[EventComponent] id --> ", this.id);
+    //console.log("[EventComponent] id --> ", this.id);
 
     this.LoadResources();
   }
@@ -45,7 +45,7 @@ export class EventComponent implements OnInit {
   }
 
   scroll(id: any) {
-    console.log(`scrolling to ${id}`);
+    //console.log(`scrolling to ${id}`);
     let el = document.getElementById(id);
     if (el != null) {
       el.scrollIntoView({ behavior: 'smooth' });
@@ -60,12 +60,12 @@ export class EventComponent implements OnInit {
 
     if (this.mapParams['u_id']) {
       const currDate = new Date();
-      console.log(currDate)
+      //console.log(currDate)
       var frDate = currDate.getFullYear() + '' + ("00" + currDate.getMonth()).slice(-2) + '' + ("00" + currDate.getDate()).slice(-2);
-      console.log(frDate)
+      //console.log(frDate)
       this.mapParams["a_date"] = frDate
       this.mapParams["id"] = this.id;
-      console.log(this.mapParams);
+      //console.log(this.mapParams);
 
       this.endpoint.submitAttendance(this.mapParams).subscribe(r => this.apiSubmitResponse = r);
     } else {

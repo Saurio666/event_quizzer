@@ -17,5 +17,6 @@ public final class BeansConstants {
 	{
 		public static final String NOT_FOUND = "QUIZZ_NOT_FOUND";
 		public static final String ALREADY_ANSWERED = "QUIZZ_ALREADY_ANSWERED";
+		public static final String MAX_ATTEMPTS = "MAX_ATTEMPTS";
 	}
 }

@@ -26,7 +26,7 @@
                     </ng-template>-->
                     <ng-template [ngIf]="apiSubmitResponse.data['attendance_user']">
                         <br /> <b>{{environmentLabels['event_frm_msg_welcome']}}
-                            {{apiSubmitResponse.data['attendance_user']}}</b>
+                            <div [innerHTML]="apiSubmitResponse.data['attendance_user']"></div></b>
                     </ng-template>
                 </ng-template>
 

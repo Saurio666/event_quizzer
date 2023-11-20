@@ -53,15 +53,15 @@ export class QuizzerComponent implements OnInit {
 
   ngOnInit(): void {
     this.id = this.route.snapshot.paramMap.get('id');
-    console.log("id --> ", this.id);
+    //console.log("id --> ", this.id);
     this.userId = this.route.snapshot.paramMap.get('userId');
-    console.log("userId --> ", this.userId);
+    //console.log("userId --> ", this.userId);
 
     this.LoadResources();
 
     //this.model = this.jsonData.data.model.
-    console.log("this.jsonData ", this.jsonData);
-    console.log("this.jsonData.data.att_id ", this.jsonData?.data.att_id);
+    //console.log("this.jsonData ", this.jsonData);
+    //console.log("this.jsonData.data.att_id ", this.jsonData?.data.att_id);
   }
 
   private LoadResources() {
@@ -80,9 +80,9 @@ export class QuizzerComponent implements OnInit {
 
         this.endpoint.retrieveQuizzByUser(this.id, this.userId).subscribe(r => {
           this.jsonData = r;
-          console.log("r.data.att_elp", r.data.att_elp);
-          console.log("r.data.model.time", r.data.model.quizzTime);
-          console.log("r.data.att_id", r.data.att_id);
+          //console.log("r.data.att_elp", r.data.att_elp);
+          //console.log("r.data.model.time", r.data.model.quizzTime);
+          //console.log("r.data.att_id", r.data.att_id);
           if (r.data.model.quizzTime > 0) {
             this.startTimer(r.data.att_elp, r.data.model.quizzTime);
           }
@@ -96,7 +96,7 @@ export class QuizzerComponent implements OnInit {
   }
 
   private startTimer(elapsedTime: number, maxMinutes: number) {
-    console.log("startTimer elapsedTime --> ", elapsedTime)
+    //console.log("startTimer elapsedTime --> ", elapsedTime)
     const timerInterval = 1000; // Intervalo de 1 segundo
     const totalTime = 60; // Tiempo total en segundos
     this.timeElapsedMinutes = elapsedTime;
@@ -133,40 +133,59 @@ export class QuizzerComponent implements OnInit {
         this.timeLeft = time;
       },
       complete: () => {
-        console.log('Tiempo agotado');
+        //console.log('Tiempo agotado');
         this.getResponse('N');
       }
     });
   }
 
   private validateEmptyAnswers(answersMapForResponse: any) {
-    console.log("answersMapForResponse --> ", answersMapForResponse);
+    //console.log("answersMapForResponse --> ", answersMapForResponse);
     this.answersErrorsMap = {};
     this.validationMessage = '';
-    console.log("Test errors", this.answersErrorsMap);
-    if (this.jsonData.questions) {
-      this.jsonData.questions.forEach((q: { id: string; correctAnswers: number; }) => {
-        if (!answersMapForResponse[q.id]) {
-          this.answersErrorsMap['q-' + q.id] = 'quizz_frm_msg_empty_answer';
+    //console.log("Test errors", this.answersErrorsMap);
+    if (this.jsonData.data.model.questions) {
+      this.jsonData.data.model.questions.forEach((q: { id: string; correctAnswers: number; subQuestions: any }) => {
+
+        if (q.subQuestions) {
+          var existsEmptyChilds: boolean = false;
+          q.subQuestions.forEach((chq: { id: string }) => {
+            if (!answersMapForResponse[chq.id]) {
+              this.answersErrorsMap['q-' + chq.id] = 'quizz_frm_msg_empty_answer_2';
+              existsEmptyChilds = true;
+            }
+          });
+
+          if (existsEmptyChilds) {
+            this.answersErrorsMap['q-' + q.id] = 'quizz_frm_msg_empty_answer_childs';
+          }/* else {
+            delete this.answersErrorsMap['q-' + q.id];
+          }*/
         } else {
-          const array = answersMapForResponse[q.id].split(',');
-          console.log("array", array, array.length);
-          if (array.length < q.correctAnswers) {
-            this.answersErrorsMap['q-' + q.id] = 'quizz_frm_msg_answer_counter_min';
-          }
-          else {
-            if (array.length > q.correctAnswers) {
-              this.answersErrorsMap['q-' + q.id] = 'quizz_frm_msg_answer_counter_max';
+          if (!answersMapForResponse[q.id]) {
+            this.answersErrorsMap['q-' + q.id] = 'quizz_frm_msg_empty_answer';
+          } else {
+            const array = answersMapForResponse[q.id].split(',');
+            //console.log("array", array, array.length);
+            if (array.length < q.correctAnswers) {
+              this.answersErrorsMap['q-' + q.id] = 'quizz_frm_msg_answer_counter_min';
+            }
+            else {
+              if (array.length > q.correctAnswers) {
+                this.answersErrorsMap['q-' + q.id] = 'quizz_frm_msg_answer_counter_max';
+              }
             }
           }
         }
+
       });
     }
 
-    console.log("Test errors", this.answersErrorsMap);
+    //console.log("Test errors", this.answersErrorsMap);
   }
 
   getResponse(validateEmpty: string) {
+    //console.log("getResponse", "Start....");
     //return;
 
     const answersMapCheck: { [key: string]: any } = {};
@@ -179,7 +198,7 @@ export class QuizzerComponent implements OnInit {
 
     const answersMapForResponse: { [key: string]: string } = {};
 
-    console.log("answersMap", this.answersMap);
+    //console.log("answersMap", this.answersMap);
 
     const keys = Object.keys(this.answersMap);
     keys.forEach((key) => {
@@ -188,8 +207,8 @@ export class QuizzerComponent implements OnInit {
 
         if (key.includes("a")) {
           const data = key.split(";");
-          //console.log('pregunta:', data[0].substring(2));
-          //console.log('respuesta:', data[1].substring(2));
+          ////console.log('pregunta:', data[0].substring(2));
+          ////console.log('respuesta:', data[1].substring(2));
 
           if (answersMapForResponse[data[0].substring(2)] != null) {
             const newValue = answersMapForResponse[data[0].substring(2)] + "," + data[1].substring(2);
@@ -200,15 +219,15 @@ export class QuizzerComponent implements OnInit {
           }
 
         } else {
-          //console.log('pregunta:', key.substring(2));
-          //console.log('respuesta:', this.answersMap[key]);
+          ////console.log('pregunta:', key.substring(2));
+          ////console.log('respuesta:', this.answersMap[key]);
           answersMapForResponse[key.substring(2)] = this.answersMap[key] + "";
         }
       }
     });
 
     if (validateEmpty === 'Y') {
-      console.log("Requiere validacion");
+      //console.log("Requiere validacion");
       this.validateEmptyAnswers(answersMapForResponse);
       if (this.answersErrorsMap && Object.keys(this.answersErrorsMap).length > 0) {
         this.validationMessage = this.environmentLabels['quizz_frm_msg_validate_answers'];
@@ -216,20 +235,20 @@ export class QuizzerComponent implements OnInit {
       }
       answersMapCheck["smt_act"] = "0";
     } else {
-      console.log("No requiere validacion");
+      //console.log("No requiere validacion");
       answersMapCheck["smt_act"] = "1";
     }
-    console.log("Continua con el registro");
+    //console.log("Continua con el registro");
 
     answersMapCheck["answers"] = answersMapForResponse;
 
-    console.log(this.answersMap);
-    console.log(answersMapCheck);
+    //console.log(this.answersMap);
+    //console.log(answersMapCheck);
 
     this.endpoint.submitAnswers(answersMapCheck, this.id).subscribe(r => this.apiSubmitResponse = r);
 
-    console.log("*2222* ");
-    console.log("*3333* ", this.apiSubmitResponse);
+    //console.log("*2222* ");
+    //console.log("*3333* ", this.apiSubmitResponse);
     /*if(this.apiSubmitResponse.status === 'OK') {
 
     }*/
@@ -248,12 +267,29 @@ export class QuizzerComponent implements OnInit {
         this.jsonData = r;
       });
       this.mapParams['show_valid_quiz'] = 'Y';
-      //console.log(this.mapParams);
+      ////console.log(this.mapParams);
     }
   }
 
+  onItemSelected(event: any, /*answer: any, */question: any) {
+    const selectedId = event.target.value; // Obtén el ID seleccionado
+    //console.log("[onItemSelected] selectedId --> ", selectedId);
+    ////console.log("[onItemSelected] answer.id --> ", answer?.id);
+    //console.log("[onItemSelected] question.id --> ", question?.id);
+    //const selectedItem = this.items.find(item => item.id === selectedId); // Encuentra el elemento correspondiente al ID
+
+    if (question?.id) {
+      this.answersMap['q-' + question?.id] = selectedId;
+    }
+    /*if (selectedItem) {
+      this.selectedMap[selectedItem.id] = selectedItem.name; // Agrega al mapa clave-valor
+      //console.log('Mapa clave-valor:', this.selectedMap);
+    }*/
+  }
+
+
   scroll(id: any) {
-    console.log(`scrolling to ${id}`);
+    //console.log(`scrolling to ${id}`);
     let el = document.getElementById(id);
     if (el != null) {
       el.scrollIntoView({ behavior: 'smooth' });

@@ -148,9 +148,9 @@ public class QuizService {
 			if (credentials != null) {
 				//QuizzModel data = quizzBean.getQuizz(credentials.getQuizId(), credentials.getUserId());
 				QuizzModel data = quizzBean.getQuizzByIdStartAttempt(credentials.getQuizId(), credentials.getUserId(), responseData);
-				if (data == null) {
+				/*if (data == null) {
 					return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-				}
+				}*/
 				responseData.put("model", data);
 				return new ResponseEntity<>(new ApiResponse("OK", "", responseData), HttpStatus.OK);
 			}
