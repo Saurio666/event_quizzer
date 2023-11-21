@@ -1,5 +1,7 @@
 package com.sauriotech.eventquizzer.models;
 
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sauriotech.eventquizzer.utils.UIMessage;
 
@@ -33,6 +35,14 @@ public class EventModel extends BaseModel {
 	@Getter
 	@Setter
 	private String extraContent;
+	
+	@Getter
+	@Setter
+	private Date eventStartDate;
+	
+	@Getter
+	@Setter
+	private Date eventEndDate;
 	
 	public EventModel() {}
 	

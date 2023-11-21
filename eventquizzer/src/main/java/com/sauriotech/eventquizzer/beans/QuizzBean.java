@@ -1,6 +1,8 @@
 package com.sauriotech.eventquizzer.beans;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -32,6 +34,7 @@ import com.sauriotech.eventquizzer.security.BasicAuthorizer;
 import com.sauriotech.eventquizzer.utils.DummyLogger;
 import com.sauriotech.eventquizzer.utils.Language;
 import com.sauriotech.eventquizzer.utils.TimezoneHelper;
+import com.sauriotech.eventquizzer.utils.UIMessage;
 
 /**
  * @author SAURIOTech Solutions.
@@ -73,13 +76,27 @@ public class QuizzBean extends DummyBean {
 		if (!quizzez.isEmpty()) {
 
 			for (Quizz q : quizzez) {
-				QuizzModel m = transformEntity(q, setQuestions);
+				DummyLogger.sysout("QuizzBean", "getActiveQuizzesByEvent",
+						"q.getQuizzStartDate() " + q.getQuizzStartDate());
+				DummyLogger.sysout("QuizzBean", "getActiveQuizzesByEvent",
+						"q.getQuizzEndDate() " + q.getQuizzEndDate());
 
-				if (responseData.containsKey("u_id")) {
-					m.setQuizUrl(basicAuthorizer.encryptData(q.getId() + ";" + responseData.get("u_id").toString()));
+				Date check1 = TimezoneHelper.getDateFromTimezone(em.getEventTimezone());
+				DummyLogger.sysout("QuizzBean", "getActiveQuizzesByEvent", "check1 " + check1);
+				DummyLogger.sysout("QuizzBean", "getActiveQuizzesByEvent", "check --> "
+						+ TimezoneHelper.checkDateBetweenTwoDates(q.getQuizzStartDate(), q.getQuizzEndDate(), check1));
+
+				boolean inDate = TimezoneHelper.checkDateBetweenTwoDates(q.getQuizzStartDate(), q.getQuizzEndDate(),
+						check1);
+
+				if (inDate) {
+					QuizzModel m = transformEntity(q, setQuestions);
+					if (responseData.containsKey("u_id")) {
+						m.setQuizUrl(
+								basicAuthorizer.encryptData(q.getId() + ";" + responseData.get("u_id").toString()));
+					}
+					models.add(m);
 				}
-
-				models.add(m);
 			}
 		}
 
@@ -122,17 +139,35 @@ public class QuizzBean extends DummyBean {
 			DummyLogger.sysout("QuizzBean", "getQuizzById", "Check for previus attempts");
 			DummyLogger.sysout("QuizzBean", "getQuizzById", "userId " + userId);
 			DummyLogger.sysout("QuizzBean", "getQuizzById", "quizzId " + quizzId);
+			Date check1 = TimezoneHelper.getDateFromTimezone(m.getEventTimezone());
+			DummyLogger.sysout("QuizzBean", "getActiveQuizzesByEvent", "check --> "
+					+ TimezoneHelper.checkDateBetweenTwoDates(m.getQuizzStartDate(), m.getQuizzEndDate(), check1));
+			boolean inDate = TimezoneHelper.checkDateBetweenTwoDates(m.getQuizzStartDate(), m.getQuizzEndDate(),
+					check1);
+			if (inDate) {
 
-			AttemptModel am = attemptBean.startAttempt(userId, quizzId, m.getEventTimezone(), m.getAttemptsPerUser());
-			if (am != null) {
-				responseData.put("att_id", am.getId());
-				responseData.put("att_str", TimezoneHelper.convertStringDateFull(am.getAttemptStart()));
-				Date currentTime = TimezoneHelper.getDateFromTimezone(m.getEventTimezone());
-				responseData.put("att_elp", TimezoneHelper.getDifferenceInMinutes(am.getAttemptStart(), currentTime));
-				// responseData.
+				AttemptModel am = attemptBean.startAttempt(userId, quizzId, m.getEventTimezone(),
+						m.getAttemptsPerUser());
+				if (am != null) {
+					responseData.put("att_id", am.getId());
+					responseData.put("att_str", TimezoneHelper.convertStringDateFull(am.getAttemptStart()));
+					Date currentTime = TimezoneHelper.getDateFromTimezone(m.getEventTimezone());
+					responseData.put("att_elp",
+							TimezoneHelper.getDifferenceInMinutes(am.getAttemptStart(), currentTime));
+					// responseData.
+				} else {
+					responseData.put("authorization",
+							Language.getInstance().getMessage(null, BeansConstants.Quizz.MAX_ATTEMPTS));
+					return null;
+				}
 			} else {
-				responseData.put("authorization",
-						Language.getInstance().getMessage(null, BeansConstants.Quizz.MAX_ATTEMPTS));
+				
+				UIMessage message = Language.getInstance().getMessage(null, BeansConstants.Quizz.OUT_OF_TIME);
+				message.setMessage(message.getMessage().replace("#start",
+						TimezoneHelper.convertStringDateFull(m.getQuizzStartDate())));
+				message.setMessage(message.getMessage().replace("#end",
+						TimezoneHelper.convertStringDateFull(m.getQuizzEndDate())));
+				responseData.put("authorization", message);
 				return null;
 			}
 		}
@@ -309,5 +344,21 @@ public class QuizzBean extends DummyBean {
 		ThreadSafeBean.getInstance().refreshQuizzModel(quizzId);
 
 		return "Quiz " + quizzId + " has been updated successfully";
+	}
+
+	public byte[] getReport(Long eventId) {
+		EventModel em = eventBean.getActiveEvent(eventId);
+		List<Quizz> quizzes = quizzDao.findByRecordStatusAndEventIdOrderByQuizzStartDateAsc(EntityConstants.STATUS_ACTIVE, eventId);
+		List<Long> quizzId = new ArrayList<>();
+		List<String> quizzShortDesc = new ArrayList<>();
+		
+		for(Quizz q : quizzes) {
+			quizzId.add(q.getId());
+			quizzShortDesc.add(q.getShortDescription());
+		}
+		
+		return attemptBean.getReport(quizzId, quizzShortDesc);
+		
+		
 	}
 }

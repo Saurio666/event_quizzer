@@ -1,5 +1,6 @@
 package com.sauriotech.eventquizzer.models;
 
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -57,6 +58,16 @@ public class QuizzModel extends BaseModel {
 	@Getter
 	@Setter
 	private int attemptsPerUser;
+	
+	@JsonIgnore
+	@Getter
+	@Setter
+	private Date quizzStartDate;
+	
+	@JsonIgnore
+	@Getter
+	@Setter
+	private Date quizzEndDate;
 	
 	public QuizzModel(Long id, String title, String description, List<QuestionModel> questions,
 			String status, String message) {

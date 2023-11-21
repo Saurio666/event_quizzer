@@ -13,4 +13,6 @@ import com.sauriotech.eventquizzer.entity.Attendance;
  */
 public interface AttendanceDao extends JpaRepository<Attendance, Long> {
 	public List<Attendance> findByRecordStatus(String recordStatus);
+	
+	public List<Attendance> findByEventIdAndRecordStatusOrderByUserId(Long eventId, String recordStatus);
 }

@@ -25,6 +25,7 @@ public class Language {
 		languageEs.put("QUIZZ_NOT_FOUND", new UIMessage(UIMessage.TYPE_ERROR, "Lo sentimos pero el cuestionario ya no esta activo o no existe."));
 		languageEs.put("QUIZZ_ALREADY_ANSWERED", new UIMessage(UIMessage.TYPE_INFO, "El questionario ya fue contestado."));
 		languageEs.put("MAX_ATTEMPTS", new UIMessage(UIMessage.TYPE_ERROR, "Lo sentimos pero usted ya a cumplido con el n&uacute;mero m&aacute;ximo de intentos."));
+		languageEs.put("OUT_OF_TIME", new UIMessage(UIMessage.TYPE_ERROR, "Lo sentimos pero el cuestionario solo est&aacute; disponible desde #start hasta #end."));
 		
 		languageEs.put("BAD_REQUEST", new UIMessage(UIMessage.TYPE_ERROR, "Lo sentimos pero no es posible procesar su solicitud."));
 		

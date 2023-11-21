@@ -75,10 +75,10 @@ public class EventBean extends DummyBean {
 	 */
 
 	public Map<String, Object> registerAttendance(Long eventId, String userId) {		
-		EventModel m = ThreadSafeBean.getInstance().getEventModel(eventId);
-		if (m == null) {
+		EventModel m = getActiveEvent(eventId);
+		/*if (m == null) {
 			m = getActiveEvent(eventId);
-		}
+		}*/
 
 		Map<String, Object> data = new HashMap<>();		
 		if (m == null) {
@@ -114,5 +114,11 @@ public class EventBean extends DummyBean {
 			}
 		}
 		return data;
+	}
+	
+	public byte[] getAttendanceReport(Long eventId) {
+		EventModel m = getActiveEvent(eventId);
+		
+		return attendanceBean.getAttendanceReport(eventId, m.getEventStartDate(), m.getEventEndDate());
 	}
 }

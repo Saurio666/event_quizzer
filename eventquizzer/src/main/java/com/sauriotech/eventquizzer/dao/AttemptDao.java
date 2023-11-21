@@ -15,4 +15,5 @@ public interface AttemptDao extends JpaRepository<Attempt, Long> {
 	public List<Attempt> findByUserIdAndQuizIdAndRecordStatus(String userId, Long quizId, String status);
 	public List<Attempt> findByUserIdAndQuizIdAndRecordStatusAndAttemptEndIsNull(String userId, Long quizId, String status);
 	public List<Attempt> findByUserIdAndQuizIdAndRecordStatusAndAttemptEndIsNotNull(String userId, Long quizId, String status);
+	public List<Attempt> findByQuizIdInAndRecordStatus(List<Long> quizId, String status);
 }

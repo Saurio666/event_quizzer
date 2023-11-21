@@ -58,10 +58,21 @@ public final class TimezoneHelper {
 	public static String convertStringDateFull(Date date) {
 		return DF_TIME.format(date);
 	}
+
+	public static String convertStringDateShort(Date date) {
+		return DF.format(date);
+	}
 	
 	public static long getDifferenceInMinutes(Date start, Date end) {
 		long duration = end.getTime() - start.getTime();
 		
 		return TimeUnit.MILLISECONDS.toMinutes(duration);
+	}
+	
+	public static boolean checkDateBetweenTwoDates(Date start, Date end, Date check) {
+		DummyLogger.sysout(TimezoneHelper.class.getName(), "checkDateBetweenTwoDates","Start --> " + start);
+		DummyLogger.sysout(TimezoneHelper.class.getName(), "checkDateBetweenTwoDates","End --> " + end);
+		DummyLogger.sysout(TimezoneHelper.class.getName(), "checkDateBetweenTwoDates","Check --> " + check);
+		return check.compareTo(start) >= 0 && check.compareTo(end) <= 0;
 	}
 }

@@ -15,4 +15,6 @@ public interface QuizzDao extends JpaRepository<Quizz, Long> {
 	public List<Quizz> findByRecordStatus(String recordStatus);
 	
 	public List<Quizz> findByRecordStatusAndEventId(String recordStatus, Long eventId);
+	
+	public List<Quizz> findByRecordStatusAndEventIdOrderByQuizzStartDateAsc(String recordStatus, Long eventId);
 }

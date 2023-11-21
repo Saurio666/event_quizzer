@@ -1,9 +1,11 @@
 package com.sauriotech.eventquizzer.beans;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,5 +131,52 @@ public class AttemptBean {
 		}
 
 		return m;
+	}
+
+	public byte[] getReport(List<Long> quizzIdList, List<String> quizShortDesc) {
+		List<Attempt> allAttempts = attemptDao.findByQuizIdInAndRecordStatus(quizzIdList,
+				EntityConstants.STATUS_ACTIVE);
+
+		StringBuilder sb = new StringBuilder("user, intento,");
+		for (String qId : quizShortDesc) {
+			sb.append(qId + ",");
+		}
+
+		List<String> allUsers = new ArrayList<>();
+		for (Attempt a : allAttempts) {
+			if (!allUsers.contains(a.getUserId())) {
+				allUsers.add(a.getUserId());
+			}
+		}
+		sb.append("\n");
+		for (String user : allUsers) {
+			int attemptCounter = 1;
+			sb.append(user + "," + attemptCounter + ",");
+			for (Long qId : quizzIdList) {
+				/*
+				 * List<Attempt> attempt = allAttempts.stream() .filter(at ->
+				 * at.getQuizId().equals(qId) &&
+				 * at.getUserId().equals(user)).collect(Collectors.toList()); attempt.sort((o1,
+				 * o2) -> o1.getQuizId().compareTo(o2.getQuizId()));
+				 * 
+				 * for (Attempt a : attempt) { sb.append(attemptCounter + ", "); }
+				 */
+				Optional<Attempt> attempt = allAttempts.stream()
+						.filter(at -> at.getQuizId().equals(qId) && at.getUserId().equals(user)).findFirst();
+				if (attempt.isPresent()) {
+					if (attempt.get().getAttemptScore() != null) {
+						sb.append(attempt.get().getAttemptScore() + ",");
+					} else {
+						sb.append(",");
+					}
+				} else {
+					sb.append(",");
+				}
+			}
+
+			sb.append("\n");
+		}
+
+		return sb.toString().getBytes();
 	}
 }
