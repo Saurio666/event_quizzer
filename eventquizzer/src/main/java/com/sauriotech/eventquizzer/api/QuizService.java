@@ -129,6 +129,13 @@ public class QuizService {
 					return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 				}
 				responseData.put("quiz", data);
+				
+				DummyLogger.sysout("QuizService", "getQuizzesByEventAndUser","data ---> " + data.size());
+				
+				if (data.isEmpty()) {
+					responseData.put("authorization", Language.getInstance().getMessage(null, BeansConstants.Event.NOT_ACTIVE_QUIZ));
+				}
+				
 			} else {
 				responseData.put("authorization", Language.getInstance().getMessage(null, BeansConstants.Event.NOT_AUTHORIZED));
 			}

@@ -25,6 +25,7 @@ import com.sauriotech.eventquizzer.utils.TimezoneHelper;
  */
 @Service
 public class AttendanceBean {
+	private static String SEPARATOR = ";";
 	@Autowired
 	private AttendanceDao attendanceDao;
 
@@ -66,7 +67,7 @@ public class AttendanceBean {
 	}
 
 	public byte[] getAttendanceReport(Long eventId, Date start, Date end) {
-		StringBuilder sb = new StringBuilder("user,");
+		StringBuilder sb = new StringBuilder("user" + SEPARATOR);
 		List<Attendance> allAttendance = attendanceDao.findByEventIdAndRecordStatusOrderByUserId(eventId,
 				EntityConstants.STATUS_ACTIVE);
 
@@ -75,7 +76,7 @@ public class AttendanceBean {
 
 		List<String> dates = new ArrayList<>();
 		dates.add(TimezoneHelper.convertStringDateShort(start));
-		sb.append(TimezoneHelper.convertStringDateShort(start) + ",");
+		sb.append(TimezoneHelper.convertStringDateShort(start) + SEPARATOR);
 		int countHelper = 0;
 		Date newDate = start;
 		while (true) {
@@ -87,7 +88,7 @@ public class AttendanceBean {
 			DummyLogger.sysout("AttendanceBean", "getAttendanceReport", "newDate " + newDate);
 			if (newDate.compareTo(end) <= 0) {
 				dates.add(TimezoneHelper.convertStringDateShort(newDate));
-				sb.append(TimezoneHelper.convertStringDateShort(newDate) + ",");
+				sb.append(TimezoneHelper.convertStringDateShort(newDate) + SEPARATOR);
 			} else {
 				break;
 			}
@@ -114,16 +115,16 @@ public class AttendanceBean {
 			}
 
 			for (String key : allData.keySet()) {
-				sb.append(key + ",");
+				sb.append(key + SEPARATOR);
 				for (String date : dates) {
 					DummyLogger.sysout("AttendanceBean", "getAttendanceReport", "get info for date " + date);
 					Optional<Attendance> findByDate = allAttendance.stream()
 							.filter(at -> at.getUserId().equals(key) && date.equals(at.getAttendanceDate()))
 							.findFirst();
 					if (findByDate.isPresent()) {
-						sb.append("X,");
+						sb.append("X" + SEPARATOR);
 					} else {
-						sb.append(",");
+						sb.append(SEPARATOR);
 					}
 				}
 				sb.append("\n");

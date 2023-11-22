@@ -30,6 +30,8 @@ public class AttemptBean {
 	public static final String START = "START";
 	public static final String FINISHED_BY_USER = "FINISHED_BY_USER";
 	public static final String FINISHED_BY_TIMEOUT = "FINISHED_BY_TIMEOUT";
+	
+	private static String SEPARATOR = ";";
 
 	@Autowired
 	private AttemptDao attemptDao;
@@ -137,9 +139,9 @@ public class AttemptBean {
 		List<Attempt> allAttempts = attemptDao.findByQuizIdInAndRecordStatus(quizzIdList,
 				EntityConstants.STATUS_ACTIVE);
 
-		StringBuilder sb = new StringBuilder("user, intento,");
+		StringBuilder sb = new StringBuilder("user"+SEPARATOR+" intento"+SEPARATOR);
 		for (String qId : quizShortDesc) {
-			sb.append(qId + ",");
+			sb.append(qId + SEPARATOR);
 		}
 
 		List<String> allUsers = new ArrayList<>();
@@ -151,7 +153,7 @@ public class AttemptBean {
 		sb.append("\n");
 		for (String user : allUsers) {
 			int attemptCounter = 1;
-			sb.append(user + "," + attemptCounter + ",");
+			sb.append(user + SEPARATOR + attemptCounter + SEPARATOR);
 			for (Long qId : quizzIdList) {
 				/*
 				 * List<Attempt> attempt = allAttempts.stream() .filter(at ->
@@ -165,12 +167,12 @@ public class AttemptBean {
 						.filter(at -> at.getQuizId().equals(qId) && at.getUserId().equals(user)).findFirst();
 				if (attempt.isPresent()) {
 					if (attempt.get().getAttemptScore() != null) {
-						sb.append(attempt.get().getAttemptScore() + ",");
+						sb.append(attempt.get().getAttemptScore() + SEPARATOR);
 					} else {
-						sb.append(",");
+						sb.append(SEPARATOR);
 					}
 				} else {
-					sb.append(",");
+					sb.append(SEPARATOR);
 				}
 			}
 

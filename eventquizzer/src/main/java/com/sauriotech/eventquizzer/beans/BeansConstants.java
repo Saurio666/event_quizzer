@@ -11,6 +11,7 @@ public final class BeansConstants {
 		public static final String ATTENDANCE_DUPLICATE = "EVT_ATTENDANCE_DUPLICATE";
 		public static final String NOT_FOUND = "EVT_NOT_FOUND";
 		public static final String NOT_AUTHORIZED = "EVT_NOT_AUTHORIZED";
+		public static final String NOT_ACTIVE_QUIZ = "NOT_ACTIVE_QUIZ";
 	}
 	
 	public final class Quizz
