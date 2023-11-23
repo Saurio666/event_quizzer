@@ -262,11 +262,14 @@ public class QuizzBean extends DummyBean {
 						}
 					}
 
+					
 					DummyLogger.sysout("QuizzBean", "saveQuizz", "Child total score " + childTotalScore);
 					DummyLogger.sysout("QuizzBean", "saveQuizz", "Child score " + childScore);
-
+					
 					totalScore += childTotalScore;
 					score += childScore;
+					DummyLogger.sysout("QuizzBean", "saveQuizz", "total score " + totalScore);
+					DummyLogger.sysout("QuizzBean", "saveQuizz", "score " + score);
 				}
 			} else {
 				for (AnswerModel answer : question.getAnswers()) {
@@ -297,6 +300,8 @@ public class QuizzBean extends DummyBean {
 						}
 					}
 				}
+				
+				DummyLogger.sysout("QuizzBean", "saveQuizz", "totalScore " + score);
 			}
 		}
 
