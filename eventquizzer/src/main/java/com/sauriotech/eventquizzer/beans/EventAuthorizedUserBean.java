@@ -35,7 +35,6 @@ public class EventAuthorizedUserBean {
 				authorizedUsers = transformToList(eventId, users);
 				
 				if(authorizedUsers != null) {
-					DummyLogger.sysout("EventAuthorizedUserBean", "getActiveAuthorizationByEvent", "Get authorizations for event " + eventId + " from database" + authorizedUsers);
 					ThreadSafeBean.getInstance().addAuthorizedUsers(eventId, authorizedUsers);					
 					return authorizedUsers;
 				}								
@@ -62,7 +61,6 @@ public class EventAuthorizedUserBean {
 	}
 	
 	public EventAuthorizedUserModel getAuthorization(Long eventId, String userId) {
-		DummyLogger.sysout("EventAuthorizedUserBean", "getActiveAuthorizationByEvent", "Try get authorizations for event " + eventId + " and user " + userId);
 		List<EventAuthorizedUser> authorizations = eventAuthorizedUserDao.findByUserIdAndEventIdAndRecordStatus(userId, eventId, EntityConstants.STATUS_ACTIVE);
 		
 		if(!authorizations.isEmpty()) {
