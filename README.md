@@ -79,3 +79,20 @@ The project highlights practical experience in full-stack engineering and indepe
 ## License and Usage
 
 This project originated as client-commissioned work. Public visibility of the source code does **not** automatically grant permission to reuse, redistribute, or commercially exploit it. Refer to the repository's license, if one has been provided, and the applicable rights agreed with the client.
+
+## Runtime secrets and local setup
+
+The backend intentionally does **not** ship with database credentials or a token encryption key.
+Set the following environment variables before running `eventquizzer`:
+
+| Environment variable | Purpose |
+| --- | --- |
+| `EVENT_QUIZZER_DB_URL` | PostgreSQL JDBC URL (for example, `jdbc:postgresql://localhost:5432/your_database`) |
+| `EVENT_QUIZZER_DB_USERNAME` | PostgreSQL username |
+| `EVENT_QUIZZER_DB_PASSWORD` | PostgreSQL password |
+| `EVENT_QUIZZER_TOKEN_SECRET` | A new random secret of at least 32 characters used for quiz tokens |
+
+Do not commit real values, share them in issue reports, or use the previously embedded values.
+The Spring Boot application will fail to start until these values have been configured.
+
+**Important migration note:** changing the token secret invalidates previously generated encrypted quiz links. Regenerate links after deployment. If a database account in repository history was ever valid, rotate its password and review its permissions. Replacing files in the latest commit does not erase secrets from Git history; purge historical commits separately if required. The legacy token encryption mechanism is unchanged in this patch and should be modernized in a separate, compatibility-reviewed update.
