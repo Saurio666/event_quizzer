@@ -137,7 +137,6 @@ public class QuizzBean extends DummyBean {
 		if (startAttempt) {
 			// Verify max attempts
 			DummyLogger.sysout("QuizzBean", "getQuizzById", "Check for previus attempts");
-			DummyLogger.sysout("QuizzBean", "getQuizzById", "userId " + userId);
 			DummyLogger.sysout("QuizzBean", "getQuizzById", "quizzId " + quizzId);
 			Date check1 = TimezoneHelper.getDateFromTimezone(m.getEventTimezone());
 			DummyLogger.sysout("QuizzBean", "getActiveQuizzesByEvent", "check --> "
@@ -212,7 +211,6 @@ public class QuizzBean extends DummyBean {
 
 	public Map<String, Object> saveQuizz(String userId, Long quizzId, Long attemptId, String action,
 			Map<String, String> answers) {
-		DummyLogger.sysout(this.getClass().getName(), "saveQuizz", "userId: " + userId);
 		DummyLogger.sysout(this.getClass().getName(), "saveQuizz", "quizzId: " + quizzId);
 		DummyLogger.sysout(this.getClass().getName(), "saveQuizz", "attemptId: " + attemptId);
 		QuizzModel model = getQuizzByIdNonStart(quizzId);
@@ -325,7 +323,6 @@ public class QuizzBean extends DummyBean {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			String qualifiedData = mapper.writeValueAsString(qualified);
-			DummyLogger.sysout("QuizzBean", "saveQuizz", "qualified: " + qualifiedData);
 			String submitedData = mapper.writeValueAsString(answers);
 			// AttemptModel m = attemptBean.submitAttemptInfo(userId, quizzId, submitedData,
 			// qualifiedData, score, model.getEventTimezone(), action);
@@ -343,7 +340,6 @@ public class QuizzBean extends DummyBean {
 	}
 
 	public String updateData(String userId, Long quizzId) {
-		DummyLogger.sysout(this.getClass().getName(), "updateData", "userId: " + userId);
 		DummyLogger.sysout(this.getClass().getName(), "updateData", "quizzId: " + quizzId);
 
 		ThreadSafeBean.getInstance().refreshQuizzModel(quizzId);

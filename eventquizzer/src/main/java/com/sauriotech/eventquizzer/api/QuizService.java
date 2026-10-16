@@ -118,7 +118,6 @@ public class QuizService {
 	public ResponseEntity<ApiResponse> getQuizzesByEventAndUser(@PathVariable("eventId") Long eventId,
 			@PathVariable("userId") String userId) {
 		DummyLogger.sysout("QuizService", "getQuizzesByEventAndUser","eventId ---> " + eventId);
-		DummyLogger.sysout("QuizService", "getQuizzesByEventAndUser","userId ---> " + userId);
 		try {
 			Map<String, Object> responseData = new HashMap<>();
 			responseData.put("u_id", userId);
@@ -170,12 +169,8 @@ public class QuizService {
 
 	@PostMapping("/submit")
 	public ResponseEntity<ApiResponse> submitQuizz(@RequestBody Map<String, Object> data) {
-		DummyLogger.sysout("QuizService", "submitQuizz", data);
 
 		Map<String, String> answers = (Map<String, String>) data.get("answers");
-		DummyLogger.sysout("QuizService", "submitQuizz","Answers ---> " + answers);
-		DummyLogger.sysout("QuizService", "submitQuizz", "Action --> " + data.get("smt_act"));
-		DummyLogger.sysout("QuizService", "submitQuizz", "AttemptId --> " + data.get("att_id"));
 		
 		String userId = data.get("userId").toString();
 		String qId = data.get("id").toString();

@@ -1,42 +1,42 @@
 package com.sauriotech.eventquizzer.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.sauriotech.eventquizzer.utils.DummyLogger;
-
-/**
- * @author SAURIOTech Solutions.
- *
- */
 @Service
 public class BasicAuthorizer {
-	private static final String KEY = "mpieqwcqafrxbkpvakumwcqlfrfqph";
-	
-	public Credentials parseToken(String token) {
-		DummyLogger.sysout("BasicAuthorizer", "parseToken", "token: " + token);
-		String data = Encrypter.decrypt(token, KEY);
-		
-		if(data != null) {
-			String[] info = data.split(";");
-			DummyLogger.sysout("BasicAuthorizer", "parseToken", "info: " + info);
-			
-			if(info.length == 2) {
-				DummyLogger.sysout("BasicAuthorizer", "parseToken", "info[0] " + info[0]);
-				DummyLogger.sysout("BasicAuthorizer", "parseToken", "info[1] " + info[1]);
-				
-				return new Credentials(Long.parseLong(info[0]), info[1]);
-			}			
-			else if(info.length == 1) {
-				DummyLogger.sysout("BasicAuthorizer", "parseToken", "info[0] " + info[0]);
-				
-				return new Credentials(Long.parseLong(info[0]), null);
-			}
-		}
-		
-		return null;
-	}
-	
-	public String encryptData(String token) {
-		return Encrypter.encrypt(token, KEY);
-	}
+    private final String secret;
+
+    public BasicAuthorizer(@Value("${EVENT_QUIZZER_TOKEN_SECRET}") String secret) {
+        if (secret == null || secret.length() < 32) {
+            throw new IllegalArgumentException("EVENT_QUIZZER_TOKEN_SECRET must be at least 32 characters");
+        }
+        this.secret = secret;
+    }
+
+    public Credentials parseToken(String token) {
+        if (token == null || token.isEmpty()) {
+            return null;
+        }
+        String data = Encrypter.decrypt(token, secret);
+        if (data == null) {
+            return null;
+        }
+        String[] info = data.split(";");
+        try {
+            if (info.length == 2) {
+                return new Credentials(Long.parseLong(info[0]), info[1]);
+            }
+            if (info.length == 1) {
+                return new Credentials(Long.parseLong(info[0]), null);
+            }
+        } catch (NumberFormatException ignored) {
+            // Invalid token payload. Never log the token or decrypted data.
+        }
+        return null;
+    }
+
+    public String encryptData(String token) {
+        return Encrypter.encrypt(token, secret);
+    }
 }
