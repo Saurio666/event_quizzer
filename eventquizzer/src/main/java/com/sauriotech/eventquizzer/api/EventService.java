@@ -46,12 +46,10 @@ public class EventService {
 	
 	@PostMapping("/register")
 	public ResponseEntity<ApiResponse> registerAttendance(@RequestBody Map<String, Object> data) {
-		System.out.println(data);
 		String eId = data.get("id").toString();
 		String uId = data.get("u_id").toString();
 		String date = data.get("a_date").toString();
 		
-		DummyLogger.sysout("EventService", "registerAttendance", data);
 		
 		Long eventId = null;
 		Map<String, Object> responseData = null;
