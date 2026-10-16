@@ -122,9 +122,7 @@ public class AttemptBean {
 		if (a.getQualifiedData() != null) {
 			ObjectMapper mapper = new ObjectMapper();
 			try {
-				DummyLogger.sysout("AttemptBean", "transform", "qualifiedData --> " + a.getQualifiedData());
 				Map<Long, QualifiedAnswerModel> qualifiedData = mapper.readValue(a.getQualifiedData(), Map.class);
-				DummyLogger.sysout("AttemptBean", "transform", "qualifiedData --> " + qualifiedData);
 
 			} catch (JsonProcessingException e) {
 				// TODO Auto-generated catch block
